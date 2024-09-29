@@ -1,9 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
-interface AuthRequest extends Request {
-  user?: { id: string };
-}
+import { AuthRequest, UserPayload } from '../types';
 
 const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = req.header('x-auth-token');
@@ -14,7 +11,7 @@ const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as UserPayload;
     req.user = decoded;
     next();
   } catch (err) {
