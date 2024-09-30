@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardMedia, CardContent, CardActions, Typography, IconButton } from '@mui/material';
-import { Favorite, Bookmark } from '@mui/icons-material';
+import React, { useState, useEffect, useContext } from 'react';
+import { Container, Box } from '@mui/material';
+import PhotoCard from './PhotoCard';
+import { AuthContext } from '../../App';
 import api from '../../Services/api';
 
 interface Photo {
@@ -13,75 +14,84 @@ interface Photo {
 
 const PhotoGallery: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const { isLoggedIn } = useContext(AuthContext);
+
 
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const res = await api.get('/photos');
-        setPhotos(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchPhotos();
-  }, []);
+        const cachedPhotos = localStorage.getItem('cachedPhotos');
+        if (cachedPhotos) {
+          setPhotos(JSON.parse(cachedPhotos));
+        }
+         // Fetch fresh data from the API
+         const res = await api.get('/photos');
+         const fetchedPhotos = res.data;
+ 
+         // Update state with fetched photos
+         setPhotos(fetchedPhotos);
+ 
+         // Cache the fetched photos
+         localStorage.setItem('cachedPhotos', JSON.stringify(fetchedPhotos));
+       } catch (err) {
+         console.error('Error fetching photos:', err);
+       }
+     };
+ 
+     fetchPhotos();
+   }, []);
+ 
 
-  const handleLike = async (id: string) => {
+   const handleLike = async (id: string) => {
+    if (!isLoggedIn) return;
     try {
       await api.put(`/photos/like/${id}`);
       setPhotos(photos.map(photo => 
         photo._id === id ? { ...photo, likes: [...photo.likes, 'currentUserId'] } : photo
       ));
+      // Update cache
+      localStorage.setItem('cachedPhotos', JSON.stringify(photos));
     } catch (err) {
-      console.error(err);
+      console.error('Error liking photo:', err);
     }
   };
 
   const handleBookmark = async (id: string) => {
+    if (!isLoggedIn) return;
     try {
       await api.put(`/photos/bookmark/${id}`);
       setPhotos(photos.map(photo => 
         photo._id === id ? { ...photo, bookmarks: [...photo.bookmarks, 'currentUserId'] } : photo
       ));
+      // Update cache
+      localStorage.setItem('cachedPhotos', JSON.stringify(photos));
     } catch (err) {
-      console.error(err);
+      console.error('Error bookmarking photo:', err);
     }
   };
 
   return (
-    <Grid container spacing={4}>
-      {photos.map((photo) => (
-        <Grid item xs={12} sm={6} md={4} key={photo._id}>
-          <Card>
-            <CardMedia
-              component="img"
-              height="200"
-              image={`http://localhost:5000${photo.imageUrl}`}
-              alt={photo.description}
+    <Container maxWidth="lg">
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 4,
+          py: 4,
+        }}
+      >
+        {photos.map((photo) => (
+          <Box key={photo._id} sx={{ width: { xs: '100%', sm: '45%', md: '30%' } }}>
+            <PhotoCard
+              photo={photo}
+              onLike={handleLike}
+              onBookmark={handleBookmark}
             />
-            <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                {photo.description}
-              </Typography>
-            </CardContent>
-            <CardActions disableSpacing>
-              <IconButton aria-label="like" onClick={() => handleLike(photo._id)}>
-                <Favorite color={photo.likes.includes('currentUserId') ? 'secondary' : 'action'} />
-              </IconButton>
-              <Typography variant="body2" color="text.secondary">
-                {photo.likes.length}
-              </Typography>
-              <IconButton aria-label="bookmark" onClick={() => handleBookmark(photo._id)}>
-                <Bookmark color={photo.bookmarks.includes('currentUserId') ? 'primary' : 'action'} />
-              </IconButton>
-              <Typography variant="body2" color="text.secondary">
-                {photo.bookmarks.length}
-              </Typography>
-            </CardActions>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+          </Box>
+        ))}
+      </Box>
+    </Container>
   );
 };
 
