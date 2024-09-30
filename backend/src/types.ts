@@ -1,10 +1,15 @@
-import { Request } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export interface UserPayload {
   id: string;
-  // Add any other properties that might be in your JWT payload
 }
 
 export interface AuthRequest extends Request {
   user?: UserPayload;
 }
+
+export type AsyncRequestHandler = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => Promise<void>;
