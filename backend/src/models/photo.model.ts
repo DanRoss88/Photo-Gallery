@@ -1,19 +1,22 @@
-import mongoose, { Document, Schema } from 'mongoose';
-
+import mongoose, { Schema, Document } from "mongoose";
 export interface IPhoto extends Document {
-    user: mongoose.Types.ObjectId;
-    imageUrl: string;
-    description: string;
-    likes: mongoose.Types.ObjectId[];
-    bookmarks: mongoose.Types.ObjectId[];
-  }
-  
-  const PhotoSchema: Schema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    imageUrl: { type: String, required: true },
-    description: { type: String },
-    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    bookmarks: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  }, { timestamps: true });
-  
-  export default mongoose.model<IPhoto>('Photo', PhotoSchema);
+  imageUrl: string;
+  description: string;
+  likes: number;
+  bookmarks: number;
+  user: mongoose.Types.ObjectId;
+}
+
+const PhotoSchema: Schema = new Schema({
+  imageUrl: { type: String, required: true },
+  description: { type: String, required: true },
+  likes: { type: Number, default: 0 },
+  bookmarks: { type: Number, default: 0 },
+  user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+},
+  { timestamps: true }
+);
+
+const Photo = mongoose.model<IPhoto>("Photo", PhotoSchema);
+
+export default Photo;

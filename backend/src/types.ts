@@ -13,3 +13,14 @@ export type AsyncRequestHandler = (
   res: Response,
   next: NextFunction
 ) => Promise<void>;
+
+export interface CustomError extends Error {
+  statusCode?: number;
+  isOperational?: boolean;
+}
+
+export interface PhotoInput {
+  user: string;
+  imageUrl: string;
+  description?: string;
+}

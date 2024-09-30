@@ -3,14 +3,7 @@ import { Container, Box } from '@mui/material';
 import PhotoCard from './PhotoCard';
 import { AuthContext } from '../../App';
 import api from '../../Services/api';
-
-interface Photo {
-  _id: string;
-  imageUrl: string;
-  description: string;
-  likes: string[];
-  bookmarks: string[];
-}
+import { Photo } from '../../types';
 
 const PhotoGallery: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
