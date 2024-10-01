@@ -1,32 +1,42 @@
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Box,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    Popper,
+    Paper,
+    Grow,
+    ClickAwayListener,
+    MenuList,
+    MenuItem,
+  } from '@mui/material';
 import { useAuth } from '../../Contexts/AuthContext';
 import { useTheme } from '@mui/material/styles';
 
 const Navbar: React.FC = () => {
-    const [expanded, setExpanded] = useState<string | false>(false);
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { isLoggedIn, logout } = useAuth();
     const navigate = useNavigate();
     const theme = useTheme();
   
-    const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
+    const handleToggle = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+      setOpen((prevOpen) => !prevOpen);
+    };
+  
+    const handleClose = (event: Event | React.SyntheticEvent) => {
+      if (anchorEl && anchorEl.contains(event.target as HTMLElement)) {
+        return;
+      }
+      setOpen(false);
     };
   
     const handleLogout = () => {
       logout();
-      setExpanded(false);
+      setOpen(false);
       navigate('/');
     };
   
@@ -42,62 +52,50 @@ const Navbar: React.FC = () => {
           <Button color="inherit" component={RouterLink} to="/upload" sx={{ mx: 1 }}>
             Upload
           </Button>
-          <Accordion
-            expanded={expanded === 'auth'}
-            onChange={handleChange('auth')}
-            sx={{
-              backgroundColor: 'transparent',
-              boxShadow: 'none',
-              color: 'inherit',
-              '& .MuiAccordionSummary-root': {
-                minHeight: 'auto',
-                '&.Mui-expanded': {
-                  minHeight: 'auto',
-                },
-              },
-            }}
+          <Button
+            color="inherit"
+            onClick={handleToggle}
+            sx={{ mx: 1, borderRadius: theme.shape.borderRadius }}
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              sx={{ px: 2, '&.Mui-expanded': { minHeight: 'auto' } }}
-            >
-              <Typography>{isLoggedIn ? 'Account' : 'Login / Register'}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-                {isLoggedIn ? (
-                  <Button
-                    color="inherit"
-                    onClick={handleLogout}
-                    sx={{ my: 1, borderRadius: theme.shape.borderRadius }}
-                  >
-                    Logout
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      color="inherit"
-                      component={RouterLink}
-                      to="/login"
-                      onClick={() => setExpanded(false)}
-                      sx={{ my: 1, borderRadius: theme.shape.borderRadius }}
-                    >
-                      Login
-                    </Button>
-                    <Button
-                      color="inherit"
-                      component={RouterLink}
-                      to="/register"
-                      onClick={() => setExpanded(false)}
-                      sx={{ my: 1, borderRadius: theme.shape.borderRadius }}
-                    >
-                      Register
-                    </Button>
-                  </>
-                )}
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+            {isLoggedIn ? 'Account' : 'Login / Register'}
+          </Button>
+          <Popper open={open} anchorEl={anchorEl} role={undefined} transition disablePortal>
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{
+                  transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+                }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList autoFocusItem={open} id="menu-list-grow">
+                      {isLoggedIn ? (
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                      ) : (
+                        <>
+                          <MenuItem
+                            component={RouterLink}
+                            to="/login"
+                            onClick={handleClose}
+                          >
+                            Login
+                          </MenuItem>
+                          <MenuItem
+                            component={RouterLink}
+                            to="/register"
+                            onClick={handleClose}
+                          >
+                            Register
+                          </MenuItem>
+                        </>
+                      )}
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
         </Toolbar>
       </AppBar>
     );
