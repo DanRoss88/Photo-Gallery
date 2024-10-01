@@ -16,7 +16,7 @@ export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) =>
     const result = await cloudinary.uploader.upload(req.file.path);
     
     const newPhoto: PhotoInput = {
-      user: req.user.id,
+      user: req.user._id,
       imageUrl: result.secure_url,
       description: req.body.description,
     };
@@ -42,7 +42,7 @@ export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) =>
   export const likePhoto = catchAsync(async (req: AuthRequest, res: Response) => {
     const photo = await Photo.findByIdAndUpdate(
       req.params.id,
-      { $inc: { likes: 1 } },
+      { $addToSet: { likes: req.user?._id } },
       { new: true, runValidators: true }
     );
   
@@ -59,7 +59,7 @@ export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) =>
   export const bookmarkPhoto = catchAsync(async (req: AuthRequest, res: Response) => {
     const photo = await Photo.findByIdAndUpdate(
       req.params.id,
-      { $inc: { bookmarks: 1 } },
+      { $addToSet: { bookmarks: req.user?._id } },
       { new: true, runValidators: true }
     );
   

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, SyntheticEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   TextField, 
@@ -29,7 +29,16 @@ const Register: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await api.post('/users/register', { username, email, password });
+        const res = await api.post('/users/register', {
+          username,
+          email,
+          password
+        }, {
+          headers: {
+            'Content-Type': 'application/json'  // Ensure this header is set
+          }
+        });
+  
       localStorage.setItem('token', res.data.token);
       setSnackbar({ open: true, message: 'Registration successful!', severity: 'success' });
       setTimeout(() => navigate('/'), 1500);
@@ -41,7 +50,7 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleCloseSnackbar = (event?: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }

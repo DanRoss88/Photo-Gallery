@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 export interface UserPayload {
-  id: string;
+  _id: string;
 }
 
 export interface AuthRequest extends Request {

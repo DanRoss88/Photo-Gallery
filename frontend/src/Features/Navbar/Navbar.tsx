@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
                       {isLoggedIn ? (
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       ) : (
-                        <>
+                        <div>
                           <MenuItem
                             component={RouterLink}
                             to="/login"
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
                           >
                             Register
                           </MenuItem>
-                        </>
+                        </div>
                       )}
                     </MenuList>
                   </ClickAwayListener>
