@@ -3,44 +3,33 @@ import { Container, Box } from '@mui/material';
 import PhotoCard from './PhotoCard';
 import { useAuth } from '../../Contexts/AuthContext';
 import { apiClientInstance } from '../../Services/api';
-import { Photo } from '../../types';
+import { Photo, PhotoResponse } from '../../types';
 
 const PhotoGallery: React.FC = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const { isLoggedIn, user } = useAuth();
     const currentUserId = user ? user._id : null;
   
-    useEffect(() => {
-      const fetchPhotos = async () => {
+    const fetchPhotos = async () => {
         try {
-          const cachedPhotos = localStorage.getItem('cachedPhotos');
-          if (cachedPhotos) {
-            const parsedPhotos = JSON.parse(cachedPhotos);
-            if (Array.isArray(parsedPhotos)) {
-              setPhotos(parsedPhotos);
-            }
+          const fetchedPhotosResponse = await apiClientInstance.get<PhotoResponse>('/photos');
+          const fetchedPhotos = fetchedPhotosResponse.data.photos;
+  
+          console.log("Fetched photos:", fetchedPhotos);
+          
+          if (!Array.isArray(fetchedPhotos)) {
+            console.error("Fetched photos is not an array:", fetchedPhotosResponse.data);
+            return; 
           }
-
-          // Fetch photos from the API
-          const fetchedPhotos = await apiClientInstance.get<Photo[]>('/photos');
-         // Access the photos array
-
-          // Ensure fetchedPhotos is an array
-          if (Array.isArray(fetchedPhotos)) {
-            setPhotos(fetchedPhotos);
-            localStorage.setItem('cachedPhotos', JSON.stringify(fetchedPhotos));
-          } else {
-            console.error('Fetched photos is not an array:', fetchedPhotos);
-            setPhotos([]); // Reset to empty array if not an array
-          }
-        } catch (err) {
-          console.error('Error fetching photos:', err);
-          setPhotos([]); // Reset to empty array on error
+  
+          setPhotos(fetchedPhotos);
+        } catch (error) {
+          console.error("Error fetching photos:", error);
         }
       };
-  
-      fetchPhotos();
-    }, []);
+      useEffect(() => {
+        fetchPhotos();
+      }, []); 
   
     const handleLike = async (id: string) => {
       if (!isLoggedIn || !currentUserId) return;
