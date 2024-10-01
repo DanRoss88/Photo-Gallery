@@ -28,37 +28,37 @@ export const seedUsers = [
 
 export const seedPhotos = [
   {
-    imageUrl: 'https://source.unsplash.com/random/800x600?nature',
+    imageUrl: 'https://loremflickr.com/400/400/nature',
     description: 'Beautiful nature landscape',
     likes: [], 
     bookmarks: [],
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/800x600?city',
+    imageUrl: 'https://loremflickr.com/400/400/city',
     description: 'Urban cityscape at night',
     likes: [], 
     bookmarks: [],
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/800x600?food',
+    imageUrl: 'https://loremflickr.com/400/400/food',
     description: 'Delicious gourmet meal',
     likes: [],
     bookmarks: [], 
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/800x600?technology',
+    imageUrl: 'https://loremflickr.com/400/400/technology',
     description: 'Modern technology gadgets',
     likes: [], 
     bookmarks: [], 
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/800x600?animals',
+    imageUrl: 'https://loremflickr.com/400/400/animals',
     description: 'Cute animals in the wild',
     likes: [],
     bookmarks: [],
   },
   {
-    imageUrl: 'https://source.unsplash.com/random/800x600?architecture',
+    imageUrl: 'https://loremflickr.com/400/400/architecture',
     description: 'Impressive architectural design',
     likes: [],
     bookmarks: [],
