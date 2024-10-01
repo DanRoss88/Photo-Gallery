@@ -6,6 +6,7 @@ import connectDB from './config/db';
 import { PORT } from './config/env';
 import { globalErrorHandler } from './utils/errorHandler';
 import { AppError } from './utils/errorHandler';
+import bodyParser from 'body-parser'
 
 import userRoutes from './routes/user.routes';
 import photoRoutes from './routes/photo.routes';
@@ -16,13 +17,20 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(express.json());
-app.use(cors({
-    origin: 'http://localhost:3002',
-    credentials: true,
-}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.raw({ type: 'application/json' }));
+app.use(cors());
 app.use(express.static('uploads'));
 app.use(globalErrorHandler);
+app.use((req, res, next) => {
+    console.log('Received request:');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+    next();
+  });
 
 // Routes
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

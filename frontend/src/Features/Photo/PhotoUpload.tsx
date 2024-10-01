@@ -1,9 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { Button, TextField, Typography, Box, Paper, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { Button, TextField, Typography, Box, Paper, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ImageIcon from '@mui/icons-material/Image';
-import api from '../../Services/api';
+import { apiClientInstance }from '../../Services/api';
 import { styled } from '@mui/material/styles';
+import { Snackbar } from './Snackbar';
+import { useForm } from '../../Hooks/useForm';
+import { AlertColor } from '../../types';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -16,16 +19,18 @@ const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
   });
+
+  interface PhotoUploadFormValues {
+  description: string;
+}
   
-  const PhotoUpload: React.FC = () => {
+const PhotoUpload: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
-    const [description, setDescription] = useState('');
-    const [isUploading, setIsUploading] = useState(false);
-    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
-      open: false,
-      message: '',
-      severity: 'success'
-    });
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({
+        open: false,
+        message: '',
+        severity: 'success', // Default severity
+      });
   
     const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files[0]) {
@@ -33,36 +38,29 @@ const VisuallyHiddenInput = styled('input')({
       }
     }, []);
   
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
+    const handleUpload = async (values: PhotoUploadFormValues) => {
       if (!file) return;
   
-      setIsUploading(true);
       const formData = new FormData();
       formData.append('image', file);
-      formData.append('description', description);
+      formData.append('description', values.description);
   
       try {
-        await api.post('/photos', formData, {
+        await apiClientInstance.post('/photos', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         setFile(null);
-        setDescription('');
         setSnackbar({ open: true, message: 'Photo uploaded successfully!', severity: 'success' });
       } catch (err) {
         console.error(err);
         setSnackbar({ open: true, message: 'Failed to upload photo. Please try again.', severity: 'error' });
-      } finally {
-        setIsUploading(false);
       }
     };
   
-    const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      setSnackbar({ ...snackbar, open: false });
-    };
+    const { values, handleChange, handleSubmit, isLoading } = useForm<PhotoUploadFormValues>({
+      initialValues: { description: '' },
+      onSubmit: handleUpload,
+    });
   
     return (
       <Paper elevation={3} sx={{ p: 4, maxWidth: 500, mx: 'auto', mt: 4 }}>
@@ -71,40 +69,46 @@ const VisuallyHiddenInput = styled('input')({
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Button
-            variant="outlined"
             component="label"
+            variant="outlined"
             startIcon={file ? <ImageIcon /> : <CloudUploadIcon />}
-            sx={{ height: 100, borderStyle: 'dashed' }}
+            sx={{ mb: 2 }}
           >
-            {file ? file.name : 'Choose File'}
-            <VisuallyHiddenInput type="file" onChange={handleFileChange} accept="image/*" required />
+            {file ? 'Change Photo' : 'Upload Photo'}
+            <VisuallyHiddenInput type="file" onChange={handleFileChange} accept="image/*" />
           </Button>
+          {file && (
+            <Typography variant="body2" align="center">
+              Selected file: {file.name}
+            </Typography>
+          )}
           <TextField
             fullWidth
-            label="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
             multiline
-            rows={3}
-            variant="outlined"
+            rows={4}
+            label="Description"
+            name="description"
+            value={values.description}
+            onChange={handleChange}
           />
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            disabled={isUploading || !file}
-            startIcon={isUploading ? <CircularProgress size={20} color="inherit" /> : <CloudUploadIcon />}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!file || isLoading}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            {isUploading ? 'Uploading...' : 'Upload'}
+            {isLoading ? 'Uploading...' : 'Upload'}
           </Button>
         </Box>
-        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
-      </Paper>
-    );
-  };
-  
-  export default PhotoUpload;
+        <Snackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+      />
+    </Paper>
+  );
+};
+
+export default PhotoUpload;

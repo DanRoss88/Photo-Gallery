@@ -1,111 +1,116 @@
-import React, { useState, SyntheticEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  TextField, 
-  Button, 
-  Typography, 
-  Box, 
-  Paper, 
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Typography,
+  Box,
+  Paper,
   CircularProgress,
-  Snackbar,
-  Alert
-} from '@mui/material';
-import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
-import api from '../../Services/api';
+} from "@mui/material";
+import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
+import { useForm } from "../../Hooks/useForm";
+import { Snackbar } from "../Photo/Snackbar";
+import { FormField } from "./FormField";
+import { apiClientInstance } from "../../Services/api";
+import { RegisterFormValues } from "../../types";
+import { formContainerStyles, formPaperStyles, formStyles } from "../../theme";
+import { AuthResponse, AlertColor } from "../../types";
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+  const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({
     open: false,
     message: '',
     severity: 'success'
   });
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const handleRegister = async (values: RegisterFormValues) => {
     try {
-        const res = await api.post('/users/register', {
-          username,
-          email,
-          password
-        }, {
-          headers: {
-            'Content-Type': 'application/json'  // Ensure this header is set
-          }
-        });
-  
-      localStorage.setItem('token', res.data.token);
-      setSnackbar({ open: true, message: 'Registration successful!', severity: 'success' });
-      setTimeout(() => navigate('/'), 1500);
+        const response = await apiClientInstance.post<AuthResponse>('/users/register', values);
+        localStorage.setItem('token', response.token);
+      setSnackbar({
+        open: true,
+        message: "Registration successful!",
+        severity: "success",
+      });
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
       console.error(err);
-      setSnackbar({ open: true, message: 'Registration failed. Please try again.', severity: 'error' });
-    } finally {
-      setIsLoading(false);
+      setSnackbar({
+        open: true,
+        message: "Registration failed. Please try again.",
+        severity: "error",
+      });
     }
   };
 
-  const handleCloseSnackbar = (event?: SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbar({ ...snackbar, open: false });
-  };
+  const { values, handleChange, handleSubmit, isLoading } =
+    useForm<RegisterFormValues>({
+      initialValues: { username: "", email: "", password: "" },
+      onSubmit: handleRegister,
+    });
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 64px)' }}>
-      <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <PersonAddOutlinedIcon sx={{ fontSize: 40, mb: 1 }} color="primary" />
+    <Box sx={formContainerStyles}>
+      <Paper elevation={3} sx={formPaperStyles}>
+        <Box component="form" onSubmit={handleSubmit} sx={formStyles}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <PersonAddOutlinedIcon
+              sx={{ fontSize: 40, mb: 1 }}
+              color="primary"
+            />
             <Typography variant="h4" component="h1" gutterBottom>
               Register
             </Typography>
           </Box>
-          <TextField
-            fullWidth
+          <FormField
             label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            name="username"
+            value={values.username}
+            onChange={handleChange}
             required
           />
-          <TextField
-            fullWidth
+          <FormField
             type="email"
             label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={values.email}
+            onChange={handleChange}
             required
           />
-          <TextField
-            fullWidth
+          <FormField
             type="password"
             label="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={values.password}
+            onChange={handleChange}
             required
           />
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
             disabled={isLoading}
-            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+            startIcon={
+              isLoading ? <CircularProgress size={20} color="inherit" /> : null
+            }
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isLoading ? "Registering..." : "Register"}
           </Button>
         </Box>
       </Paper>
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <Snackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      />
     </Box>
   );
 };

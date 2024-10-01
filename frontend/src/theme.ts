@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles';
+import { SxProps, Theme } from '@mui/material';
 
 export const theme = createTheme({
     palette: {
@@ -53,3 +54,23 @@ export const theme = createTheme({
       },
     },
   });
+
+  export const formContainerStyles: SxProps<Theme> = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 'calc(100vh - 64px)',
+  };
+  
+  export const formPaperStyles: SxProps<Theme> = {
+    p: 4,
+    maxWidth: 400,
+    width: '100%',
+  };
+  
+  export const formStyles: SxProps<Theme> = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 3,
+  };
+  

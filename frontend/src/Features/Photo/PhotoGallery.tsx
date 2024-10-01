@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Box } from '@mui/material';
 import PhotoCard from './PhotoCard';
 import { useAuth } from '../../Contexts/AuthContext';
-import api from '../../Services/api';
+import { apiClientInstance } from '../../Services/api';
 import { Photo } from '../../types';
 
 const PhotoGallery: React.FC = () => {
@@ -15,19 +15,27 @@ const PhotoGallery: React.FC = () => {
         try {
           const cachedPhotos = localStorage.getItem('cachedPhotos');
           if (cachedPhotos) {
-            setPhotos(JSON.parse(cachedPhotos));
+            const parsedPhotos = JSON.parse(cachedPhotos);
+            if (Array.isArray(parsedPhotos)) {
+              setPhotos(parsedPhotos);
+            }
           }
-          // Fetch fresh data from the API
-          const res = await api.get('/photos');
-          const fetchedPhotos = res.data;
-  
-          // Update state with fetched photos
-          setPhotos(fetchedPhotos);
-  
-          // Cache the fetched photos
-          localStorage.setItem('cachedPhotos', JSON.stringify(fetchedPhotos));
+
+          // Fetch photos from the API
+          const fetchedPhotos = await apiClientInstance.get<Photo[]>('/photos');
+         // Access the photos array
+
+          // Ensure fetchedPhotos is an array
+          if (Array.isArray(fetchedPhotos)) {
+            setPhotos(fetchedPhotos);
+            localStorage.setItem('cachedPhotos', JSON.stringify(fetchedPhotos));
+          } else {
+            console.error('Fetched photos is not an array:', fetchedPhotos);
+            setPhotos([]); // Reset to empty array if not an array
+          }
         } catch (err) {
           console.error('Error fetching photos:', err);
+          setPhotos([]); // Reset to empty array on error
         }
       };
   
@@ -37,11 +45,12 @@ const PhotoGallery: React.FC = () => {
     const handleLike = async (id: string) => {
       if (!isLoggedIn || !currentUserId) return;
       try {
-        await api.put(`/photos/like/${id}`);
-        setPhotos(photos.map(photo => 
-          photo._id === id ? { ...photo, likes: [...photo.likes, currentUserId] } : photo
-        ));
-        // Update cache
+        await apiClientInstance.put(`/photos/like/${id}`, {});
+        setPhotos(prevPhotos =>
+          prevPhotos.map(photo =>
+            photo._id === id ? { ...photo, likes: [...photo.likes, currentUserId] } : photo
+          )
+        );
         localStorage.setItem('cachedPhotos', JSON.stringify(photos));
       } catch (err) {
         console.error('Error liking photo:', err);
@@ -51,17 +60,18 @@ const PhotoGallery: React.FC = () => {
     const handleBookmark = async (id: string) => {
       if (!isLoggedIn || !currentUserId) return;
       try {
-        await api.put(`/photos/bookmark/${id}`);
-        setPhotos(photos.map(photo => 
-          photo._id === id ? { ...photo, bookmarks: [...photo.bookmarks, currentUserId] } : photo
-        ));
-        // Update cache
+        await apiClientInstance.put(`/photos/bookmark/${id}`, {});
+        setPhotos(prevPhotos =>
+          prevPhotos.map(photo =>
+            photo._id === id ? { ...photo, bookmarks: [...photo.bookmarks, currentUserId] } : photo
+          )
+        );
         localStorage.setItem('cachedPhotos', JSON.stringify(photos));
       } catch (err) {
         console.error('Error bookmarking photo:', err);
       }
     };
-  
+    
     return (
       <Container maxWidth="lg">
         <Box
@@ -87,6 +97,6 @@ const PhotoGallery: React.FC = () => {
         </Box>
       </Container>
     );
-  };
-  
-  export default PhotoGallery;
+};
+
+export default PhotoGallery;

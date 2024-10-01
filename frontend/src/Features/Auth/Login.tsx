@@ -1,81 +1,70 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  TextField, 
-  Button, 
-  Typography, 
-  Box, 
-  Paper, 
-  CircularProgress,
-  Snackbar,
-  Alert
-} from '@mui/material';
+import {  Button, Typography, Box, Paper, CircularProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import api from '../../Services/api';
+import { useForm } from '../../Hooks/useForm';
+import { Snackbar } from '../../Features/Photo/Snackbar';
+import { FormField } from '../../Features/Auth/FormField';
+import { apiClientInstance } from '../../Services/api';
+import { LoginFormValues } from '../../types';
+import { formContainerStyles, formPaperStyles, formStyles } from '../../theme';
+import { AuthResponse, AlertColor } from '../../types'
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
-    open: false,
-    message: '',
-    severity: 'success'
-  });
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({
+        open: false,
+        message: '',
+        severity: 'success', // Default severity
+      });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const res = await api.post('/users/login', { email, password });
-      localStorage.setItem('token', res.data.token);
-      setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
-      setTimeout(() => navigate('/'), 1500);
-    } catch (err) {
-      console.error(err);
-      setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const handleLogin = async (values: LoginFormValues) => {
+        try {
+            const response = await apiClientInstance.post<AuthResponse>('/users/login', values);
+            localStorage.setItem('token', response.token);
+          setSnackbar({ open: true, message: 'Login successful!', severity: 'success' });
+          setTimeout(() => navigate('/'), 1500);
+        } catch (err) {
+          console.error(err);
+          setSnackbar({ open: true, message: 'Login failed. Please try again.', severity: 'error' });
+        }
+      };
+    
+      const { values, handleChange, handleSubmit, isLoading } = useForm<LoginFormValues>({
+        initialValues: { email: '', password: '' },
+        onSubmit: handleLogin,
+      });
 
-  const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbar({ ...snackbar, open: false });
-  };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 64px)' }}>
-      <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <LockOutlinedIcon sx={{ fontSize: 40, mb: 1 }} color="primary" />
-            <Typography variant="h4" component="h1" gutterBottom>
-              Login
-            </Typography>
-          </Box>
-          <TextField
-            fullWidth
-            type="email"
-            label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            type="password"
-            label="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button 
+    <Box sx={formContainerStyles}>
+    <Paper elevation={3} sx={formPaperStyles}>
+      <Box component="form" onSubmit={handleSubmit} sx={formStyles}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <LockOutlinedIcon sx={{ fontSize: 40, mb: 1 }} color="primary" />
+          <Typography variant="h4" component="h1" gutterBottom>
+            Login
+          </Typography>
+        </Box>
+        <FormField
+          type="email"
+          label="Email"
+          name="email"
+          value={values.email}
+          onChange={handleChange}
+          required
+        />
+        <FormField
+          type="password"
+          label="Password"
+          name="password"
+          value={values.password}
+          onChange={handleChange}
+          required
+        />
+            <Button 
             type="submit" 
-            variant="contained" 
+            variant="contained"
             color="primary" 
             disabled={isLoading}
             startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
@@ -84,11 +73,12 @@ const Login: React.FC = () => {
           </Button>
         </Box>
       </Paper>
-      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <Snackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+      />
     </Box>
   );
 };
