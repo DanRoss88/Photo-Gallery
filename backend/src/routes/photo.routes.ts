@@ -1,8 +1,7 @@
 import express from 'express';
-import auth from '../middleware/auth';
-import upload from '../middleware/upload';
-import { uploadPhoto, getAllPhotos, toggleLikePhoto, toggleBookmarkPhoto } from '../controllers/photo.controllers';
-
+import {auth} from '../middleware/auth';
+import { uploadPhoto, upload } from '../middleware/upload';
+import { getAllPhotos, toggleLikePhoto, toggleBookmarkPhoto } from '../controllers/photo.controllers';
 
 const router = express.Router();
 

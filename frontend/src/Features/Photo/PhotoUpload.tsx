@@ -6,7 +6,7 @@ import { apiClientInstance }from '../../Services/api';
 import { styled } from '@mui/material/styles';
 import { Snackbar } from './Snackbar';
 import { useForm } from '../../Hooks/useForm';
-import { AlertColor } from '../../types';
+import { AlertColor, Photo } from '../../types';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -26,6 +26,7 @@ const VisuallyHiddenInput = styled('input')({
   
 const PhotoUpload: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
+    const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
     const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({
         open: false,
         message: '',
@@ -46,9 +47,14 @@ const PhotoUpload: React.FC = () => {
       formData.append('description', values.description);
   
       try {
-        await apiClientInstance.post('/photos', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        const response = await apiClientInstance.post<Photo>('/photos/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          if (!response){
+                console.log("Error uploading photo");
+                return;
+          }
+        setUploadedPhotoUrl(response.imageUrl);
         setFile(null);
         setSnackbar({ open: true, message: 'Photo uploaded successfully!', severity: 'success' });
       } catch (err) {
@@ -101,6 +107,12 @@ const PhotoUpload: React.FC = () => {
             {isLoading ? 'Uploading...' : 'Upload'}
           </Button>
         </Box>
+        {uploadedPhotoUrl && (
+        <Box sx={{ mt: 4, textAlign: 'center' }}>
+          <Typography variant="h6">Uploaded Photo:</Typography>
+          <img src={uploadedPhotoUrl} alt="Upload Page, Uploaded by User" style={{ maxWidth: '100%', height: 'auto', marginTop: '16px' }} />
+        </Box>
+      )}
         <Snackbar
         open={snackbar.open}
         message={snackbar.message}

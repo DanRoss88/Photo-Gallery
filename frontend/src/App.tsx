@@ -9,6 +9,7 @@ import Login from './Features/Auth/Login';
 import Navbar from './Features/Navbar/Navbar';
 import PhotoUpload from './Features/Photo/PhotoUpload';
 import PhotoGallery from './Features/Photo/PhotoGallery';
+import BookmarksPage from './Features/User/BookmarksPage';
 
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<PhotoGallery />} />
+          <Route path='/bookmarks' element={<BookmarksPage />} />
           <Route path="/upload" element={<PhotoUpload />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

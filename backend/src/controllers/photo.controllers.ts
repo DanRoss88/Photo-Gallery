@@ -1,34 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { catchAsync, AppError } from "../utils/errorHandler";
-import { AuthRequest, PhotoInput } from "../types";
+import { AuthRequest  } from "../types";
 import Photo from "../models/photo.model";
 import { v2 as cloudinary } from "cloudinary";
 import User from "../models/user.model";
-
-export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) => {
-    if (!req.file) {
-      throw new AppError('No file uploaded', 400);
-    }
-  
-    if (!req.user) {
-      throw new AppError('User not authenticated', 401);
-    }
-  
-    const result = await cloudinary.uploader.upload(req.file.path);
-    
-    const newPhoto: PhotoInput = {
-      user: req.user._id,
-      imageUrl: result.secure_url,
-      description: req.body.description,
-    };
-  
-    const createdPhoto = await Photo.create(newPhoto);
-  
-    res.status(201).json({
-      status: 'success',
-      data: { photo: createdPhoto },
-    });
-  });
+import { Types } from "mongoose";
+import { updateAction } from "../utils/helpers";
 
 
 export const getAllPhotos = catchAsync(async (req: Request, res: Response) => {
@@ -51,73 +28,62 @@ export const getAllPhotos = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const toggleLikePhoto = catchAsync(async (req: Request, res: Response): Promise<void> => {
-    const photoId = req.params.id;
-    const { userId, like } = req.body;
+export const toggleLikePhoto = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const { id: photoId } = req.params;
+      const { userId, like } = req.body;
   
-    if (!userId) {
-      throw new AppError('User ID is required', 400);
+      if (!userId) {
+        throw new AppError("User ID is required", 400);
+      }
+  
+      const photo = await updateAction(photoId, userId, "likes", like);
+  
+      res.status(200).json({
+        message: like ? "Liked successfully" : "Unliked successfully",
+        data: { photo },
+      });
     }
+  );
   
-    const update = like
-      ? { $addToSet: { likes: userId } } // Add to likes if not present
-      : { $pull: { likes: userId } };     // Remove from likes if present
+
+  const toggleBookmarkOnPhotoAndUser = async (photoId: Types.ObjectId, userId: Types.ObjectId, add: boolean) => {
+    // Update the photo's bookmarks
+    const photoUpdate = add
+      ? { $addToSet: { bookmarks: userId } }
+      : { $pull: { bookmarks: userId } };
   
-    const photo = await Photo.findByIdAndUpdate(photoId, update, { new: true });
+    const updatedPhoto = await Photo.findByIdAndUpdate(photoId, photoUpdate, { new: true });
+    if (!updatedPhoto) throw new AppError("Photo not found", 404);
   
-    if (!photo) {
-      throw new AppError('Photo not found', 404);
-    }
+    // Update the user's bookmarks
+    const userUpdate = add
+      ? { $addToSet: { bookmarks: photoId } }
+      : { $pull: { bookmarks: photoId } };
+  
+    const updatedUser = await User.findByIdAndUpdate(userId, userUpdate, { new: true });
+    if (!updatedUser) throw new AppError("User not found", 404);
+  
+    return { updatedPhoto, updatedUser };
+  };
+  
+  export const toggleBookmarkPhoto = catchAsync(async (req: AuthRequest, res: Response) => {
+    const { id: photoId } = req.params;
+    const userId = req.user?._id;  // req.user is properly typed here
+  
+    const { bookmark } = req.body; // Expecting a boolean value for `bookmark`
+  
+    if (!userId) throw new AppError("User not authenticated", 401);
+  
+    // Toggle bookmark on both the photo and user
+    const { updatedPhoto } = await toggleBookmarkOnPhotoAndUser(
+      new Types.ObjectId(photoId),
+      new Types.ObjectId(userId),
+      bookmark
+    );
   
     res.status(200).json({
-      message: like ? 'Liked successfully' : 'Unliked successfully',
-      data: { photo },
+      message: bookmark ? "Bookmarked successfully" : "Unbookmarked successfully",
+      data: { photo: updatedPhoto },
     });
   });
-  
-  export const toggleBookmarkPhoto = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const photoId = req.params.id;
-    const userId = req.user._id; 
-    const { bookmark } = req.body;
-
-    if (!userId) {
-        throw new AppError('User not authenticated', 401);
-    }
-
-    // Check if the photo exists
-    const photo = await Photo.findById(photoId);
-    if (!photo) {
-        throw new AppError('Photo not found', 404);
-    }
-
-    // Determine whether to add or remove the bookmark
-    if (bookmark) {
-        // Add to photo's bookmarks if not already present
-        if (!photo.bookmarks.includes(userId)) {
-            photo.bookmarks.push(userId);
-        }
-
-        // Add to user's bookmarks if not already present
-        const user = await User.findById(userId);
-        if (user && !user.bookmarks.includes(photoId)) {
-            user.bookmarks.push(photoId);
-            await user.save(); // Save updated user bookmarks
-        }
-    } else {
-        // Remove from photo's bookmarks
-        photo.bookmarks = photo.bookmarks.filter(id => id.toString() !== userId);
-        await photo.save(); // Save updated photo bookmarks
-
-        // Remove from user's bookmarks
-        const user = await User.findById(userId);
-        if (user) {
-            user.bookmarks = user.bookmarks.filter(id => id.toString() !== photoId);
-            await user.save(); // Save updated user bookmarks
-        }
-    }
-
-    res.status(200).json({
-        message: bookmark ? 'Bookmarked successfully' : 'Unbookmarked successfully',
-        data: { photo },
-    });
-});

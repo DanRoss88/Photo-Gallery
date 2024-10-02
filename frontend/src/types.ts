@@ -26,9 +26,18 @@ export interface PhotoResponse {
     results: number;
     data: {
       photos: Photo[]; 
-      total:number;
+      total: number;
     };
   }
+
+export interface BookmarkResponse {
+    status: string;
+    results: number;
+    data: {
+        bookmarks: Photo[];
+        total: number;
+    };
+}  
 export interface PhotoCardProps {
   photo: Photo;
   onLike: (id: string) => void;
