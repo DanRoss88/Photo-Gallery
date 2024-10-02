@@ -60,24 +60,28 @@ const Navbar: React.FC = () => {
         >
           Gallery
         </Button>
-        <Button
-          className={`navbar-button sixtyfour-convergence-new`}
-          color="inherit"
-          component={RouterLink}
-          to="/"
-          sx={{ mx: 1 }}
-        >
-          Bookmarks
-        </Button>
-        <Button
-          className={`navbar-button sixtyfour-convergence-new`}
-          color="inherit"
-          component={RouterLink}
-          to="/upload"
-          sx={{ mx: 1 }}
-        >
-          Upload
-        </Button>
+        {isLoggedIn && user && (
+          <>
+            <Button
+              className={`navbar-button sixtyfour-convergence-new`}
+              color="inherit"
+              component={RouterLink}
+              to="/bookmarks"
+              sx={{ mx: 1 }}
+            >
+              Bookmarks
+            </Button>
+            <Button
+              className={`navbar-button sixtyfour-convergence-new`}
+              color="inherit"
+              component={RouterLink}
+              to="/upload"
+              sx={{ mx: 1 }}
+            >
+              Upload
+            </Button>
+          </>
+        )}
         <Button
           className={`navbar-button sixtyfour-convergence-new`}
           color="inherit"

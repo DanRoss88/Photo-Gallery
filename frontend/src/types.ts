@@ -26,6 +26,7 @@ export interface PhotoResponse {
     results: number;
     data: {
       photos: Photo[]; 
+      total:number;
     };
   }
 export interface PhotoCardProps {

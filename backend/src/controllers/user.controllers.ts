@@ -4,7 +4,11 @@ import User from "../models/user.model";
 import { AsyncRequestHandler } from "../types";
 import { validateRequiredFields } from "../utils/helpers";
 import { JWT_SECRET } from "../config/env";
-
+import { catchAsync } from "../utils/errorHandler";
+import { Response } from "express";
+import { AuthRequest } from "../types";
+import Photo from "../models/photo.model";
+import { AppError } from "../utils/errorHandler";
 const jwt_secret = JWT_SECRET;
 
 export const register: AsyncRequestHandler = async (req, res) => {
@@ -105,3 +109,17 @@ export const register: AsyncRequestHandler = async (req, res) => {
     res.clearCookie('token');
     res.json({ msg: 'Logged out successfully' });
   };
+
+  export const getUserBookmarks = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
+    const userId = req.params.id;
+    const user = await User.findById(userId).populate("bookmarks"); // Adjust based on your schema
+
+    if (!user) {
+        throw new AppError('User not found', 404);
+    }
+
+    res.status(200).json({
+        total: user.bookmarks.length,
+        photos: user.bookmarks,
+    });
+});

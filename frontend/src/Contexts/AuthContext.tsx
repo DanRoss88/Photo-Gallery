@@ -17,17 +17,17 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
   
     const checkSession = async () => {
-      try {
-        const response = await apiClientInstance.get<User>("/auth/verify-token");
-        setUser(response);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Error during session check:", error);
-        setIsLoggedIn(false);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
+        try {
+            const response = await apiClientInstance.get<User>("/auth/verify-token");
+            setUser(response);  // User is logged in
+            setIsLoggedIn(true);
+        } catch (error) {
+            console.error("Error during session check:", error);
+            setIsLoggedIn(false);
+            setUser(null);
+        } finally {
+            setIsLoading(false);
+        }
     };
   
     useEffect(() => {

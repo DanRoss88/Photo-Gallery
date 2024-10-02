@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import {
   Card,
   CardMedia,
@@ -11,7 +11,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { PhotoCardProps } from "../../types";
 
-const PhotoCard: React.FC<PhotoCardProps> = ({
+const PhotoCard: FC<PhotoCardProps> = ({
   photo,
   onLike,
   onBookmark,

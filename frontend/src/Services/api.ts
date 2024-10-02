@@ -16,7 +16,6 @@ class APIClient {
             this.handleError.bind(this)
         );
     }
-
     private async handleError(error: any): Promise<never> {
         if (error.response) {
             const errorMessage = error.response.data.message || "HTTP Error";
