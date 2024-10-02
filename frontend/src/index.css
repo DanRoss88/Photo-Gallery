@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Orbitron:wght@400..900&family=Sixtyfour+Convergence&display=swap');
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -18,4 +20,61 @@ code {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.sixtyfour-convergence-new {
+  font-family: "Sixtyfour Convergence", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "BLED" 0,
+    "SCAN" 0,
+    "XELA" 0,
+    "YELA" 0;
+}
+
+.inconsolata-card-text {
+  font-family: "Inconsolata", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+
+.navbar-button {
+  transition: transform 0.3s ease, color 0.3s ease;
+  font-size: 1.2rem; /* Smaller font size for buttons */
+  padding: 6px 12px; /* Adjust padding for smaller buttons */
+}
+
+.navbar-button:hover {
+  transform: scale(1.05) rotate(-3deg); /* Slightly reduce scale on hover */
+  color: #ff4081; /* Change color on hover */
+}
+
+.navbar-title {
+  font-size: 2rem; /* Keep larger font size for the title */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.app-bar {
+  height: 80px; /* Increase height of AppBar */
+}
+/* Mobile Styles */
+@media (max-width: 600px) {
+  .navbar-button {
+    font-size: 1rem; /* Smaller size for mobile */
+    padding: 4px 8px; /* Adjust padding for mobile */
+  }
+
+  .navbar-title {
+    font-size: 1.5rem; /* Smaller title size for mobile */
+  }
+
+  .app-bar {
+    height: 60px; /* Adjust AppBar height for mobile */
+  }
 }

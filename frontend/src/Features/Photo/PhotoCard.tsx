@@ -32,7 +32,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({
         alt={photo.description || "Photo"}
       />
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
+        <Typography className="inconsolata-card-text" variant="body2" color="text.secondary">
           {photo.description}
         </Typography>
       </CardContent>

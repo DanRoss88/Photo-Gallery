@@ -1,6 +1,8 @@
 import { createTheme } from '@mui/material/styles';
 import { SxProps, Theme } from '@mui/material';
 
+
+
 export const theme = createTheme({
     palette: {
       primary: {
@@ -54,6 +56,15 @@ export const theme = createTheme({
       },
     },
   });
+
+  export const colours = {
+    primary: '#DCCCA3',
+    secondary: '#824C71',
+    tertiary: '#4A2545',
+    fourth: '#000001',
+    fifth: '#90AA86',
+  };
+
 
   export const formContainerStyles: SxProps<Theme> = {
     display: 'flex',
