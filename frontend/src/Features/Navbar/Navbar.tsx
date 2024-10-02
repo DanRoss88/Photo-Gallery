@@ -14,11 +14,12 @@ import {
   } from '@mui/material';
 import { useAuth } from '../../Contexts/AuthContext';
 import { useTheme } from '@mui/material/styles';
+import ProfileCard from '../User/ProfileCard';
 
 const Navbar: React.FC = () => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const { isLoggedIn, logout } = useAuth();
+    const { user, isLoggedIn, logout } = useAuth();
     const navigate = useNavigate();
     const theme = useTheme();
   
@@ -46,6 +47,7 @@ const Navbar: React.FC = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Photo Gallery
           </Typography>
+            {isLoggedIn && user && <ProfileCard username={user.username} />}
           <Button color="inherit" component={RouterLink} to="/" sx={{ mx: 1 }}>
             Gallery
           </Button>
@@ -57,7 +59,7 @@ const Navbar: React.FC = () => {
             onClick={handleToggle}
             sx={{ mx: 1, borderRadius: theme.shape.borderRadius }}
           >
-            {isLoggedIn ? 'Account' : 'Login / Register'}
+            {isLoggedIn && user ? `${user.username}` : 'Login / Register'}
           </Button>
           <Popper open={open} anchorEl={anchorEl} role={undefined} transition disablePortal>
             {({ TransitionProps, placement }) => (
@@ -70,7 +72,7 @@ const Navbar: React.FC = () => {
                 <Paper>
                   <ClickAwayListener onClickAway={handleClose}>
                     <MenuList autoFocusItem={open} id="menu-list-grow">
-                      {isLoggedIn ? (
+                      {isLoggedIn ?  (
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       ) : (
                         <div>

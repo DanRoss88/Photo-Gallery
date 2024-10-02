@@ -7,9 +7,10 @@ import { PORT } from './config/env';
 import { globalErrorHandler } from './utils/errorHandler';
 import { AppError } from './utils/errorHandler';
 import bodyParser from 'body-parser'
-
+import cookieParser from 'cookie-parser';
 import userRoutes from './routes/user.routes';
 import photoRoutes from './routes/photo.routes';
+import verifyTokenRoute from './routes/auth.routes';
 
 const app = express();
 
@@ -18,9 +19,16 @@ connectDB();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.raw({ type: 'application/json' }));
-app.use(cors());
+app.use(cors(
+    {
+        origin: 'http://localhost:3002',
+        credentials: true
+    }
+));
 app.use(express.static('uploads'));
 app.use(globalErrorHandler);
 app.use((req, res, next) => {
@@ -36,6 +44,7 @@ app.use((req, res, next) => {
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/photos', photoRoutes);
+app.use('/api/auth', verifyTokenRoute);
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
   });

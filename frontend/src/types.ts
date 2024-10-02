@@ -1,12 +1,15 @@
 export interface AuthContextType {
-  isLoggedIn: boolean;
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
-}
+    isLoggedIn: boolean;
+    user: User | null;
+    login: (email: string, password: string) => Promise<User>;
+    register: (username: string, email: string, password: string) => Promise<User>;
+    logout: () => Promise<void>;
+    isLoading: boolean;
+  }
 
 export interface AuthResponse {
   token: string;
+  user: User;
 }
 
 export interface Photo {
@@ -34,6 +37,8 @@ export interface PhotoCardProps {
 }
 export interface User {
   _id: string;
+  email: string;
+  username: string;
 }
 
 export interface RegisterFormValues {

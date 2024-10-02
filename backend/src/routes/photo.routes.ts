@@ -2,6 +2,7 @@ import express from 'express';
 import auth from '../middleware/auth';
 import upload from '../middleware/upload';
 import { uploadPhoto, getAllPhotos, likePhoto, bookmarkPhoto } from '../controllers/photo.controllers';
+import { verifyToken } from '../controllers/user.controllers';
 
 const router = express.Router();
 

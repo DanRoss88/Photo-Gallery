@@ -11,44 +11,49 @@ import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import { useForm } from "../../Hooks/useForm";
 import { Snackbar } from "../Photo/Snackbar";
 import { FormField } from "./FormField";
-import { apiClientInstance } from "../../Services/api";
 import { RegisterFormValues } from "../../types";
 import { formContainerStyles, formPaperStyles, formStyles } from "../../theme";
-import { AuthResponse, AlertColor } from "../../types";
+import { AlertColor } from "../../types";
+import { useAuth } from "../../Contexts/AuthContext";
 
 const Register: React.FC = () => {
-  const navigate = useNavigate();
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({
-    open: false,
-    message: '',
-    severity: 'success'
-  });
-
-  const handleRegister = async (values: RegisterFormValues) => {
-    try {
-        const response = await apiClientInstance.post<AuthResponse>('/users/register', values);
-        localStorage.setItem('token', response.token);
-      setSnackbar({
-        open: true,
-        message: "Registration successful!",
-        severity: "success",
-      });
-      setTimeout(() => navigate("/"), 1500);
-    } catch (err) {
-      console.error(err);
-      setSnackbar({
-        open: true,
-        message: "Registration failed. Please try again.",
-        severity: "error",
-      });
-    }
-  };
-
-  const { values, handleChange, handleSubmit, isLoading } =
-    useForm<RegisterFormValues>({
-      initialValues: { username: "", email: "", password: "" },
-      onSubmit: handleRegister,
+    const navigate = useNavigate();
+    const [snackbar, setSnackbar] = useState<{
+      open: boolean;
+      message: string;
+      severity: AlertColor;
+    }>({
+      open: false,
+      message: "",
+      severity: "success",
     });
+  
+    const { register } = useAuth();
+  
+    const handleRegister = async (values: RegisterFormValues) => {
+      try {
+        await register(values.username, values.email, values.password);
+        setSnackbar({
+          open: true,
+          message: "Registration successful!",
+          severity: "success",
+        });
+        setTimeout(() => navigate("/"), 1500);
+      } catch (err) {
+        console.error(err);
+        setSnackbar({
+          open: true,
+          message: "Registration failed. Please try again.",
+          severity: "error",
+        });
+      }
+    };
+  
+    const { values, handleChange, handleSubmit, isLoading } =
+      useForm<RegisterFormValues>({
+        initialValues: { username: "", email: "", password: "" },
+        onSubmit: handleRegister,
+      });
 
   return (
     <Box sx={formContainerStyles}>
