@@ -16,23 +16,22 @@ const seedData = async () => {
       const users = await User.insertMany(seedUsers);
       console.log(`${users.length} users seeded`);
   
-      // Create photos with user associations
       const photosWithUsers: IPhoto[] = await Promise.all(
         seedPhotos.map(async (photo) => {
-          // Randomly assign a user to the photo, ensuring it does not like its own photo
           const user = users[Math.floor(Math.random() * users.length)];
           const otherUsers = users.filter((u) => u.id.toString() !== user.id.toString());
-  
-          // Generate likes and bookmarks
+      
           const likes = otherUsers.slice(0, Math.floor(Math.random() * otherUsers.length)).map(u => u._id);
           const bookmarkedBy = otherUsers.slice(0, Math.floor(Math.random() * otherUsers.length)).map(u => u._id);
-  
-          return {
+      
+          const newPhoto = {
             ...photo,
             user: user._id, // Assign the user
             likes, // Assign random likes
             bookmarkedBy, // Assign random bookmarks
-          } as IPhoto; // Type assertion to IPhoto
+          };
+      
+          return newPhoto as unknown as IPhoto; // Cast through unknown
         })
       );
   

@@ -1,5 +1,5 @@
 import Photo from "../models/photo.model";
-import { AppError } from "./errorHandler";
+
 
 export const validateRequiredFields = (data: any, requiredFields: string[]): string | null => {
     for (const field of requiredFields) {
@@ -10,20 +10,19 @@ export const validateRequiredFields = (data: any, requiredFields: string[]): str
     return null;
   };
 
-export const updateAction = async (
-    itemId: string,
+  export const updateAction = async (
+    photoId: string,
     userId: string,
-    action: "likes" | "bookmarks",
-    add: boolean
+    actionField: "likes" | "bookmarkedBy",
+    action: boolean
   ) => {
-    const update = add
-      ? { $addToSet: { [action]: userId } }
-      : { $pull: { [action]: userId } };
+    const update = action
+      ? { $addToSet: { [actionField]: userId } } 
+      : { $pull: { [actionField]: userId } }; 
   
-    const item = await Photo.findByIdAndUpdate(itemId, update, { new: true });
+    const updatedPhoto = await Photo.findByIdAndUpdate(photoId, update, {
+      new: true,
+    });
   
-    if (!item) {
-      throw new AppError(`${action === "likes" ? "Photo" : "User"} not found`, 404);
-    }
-    return item;
+    return updatedPhoto;
   };

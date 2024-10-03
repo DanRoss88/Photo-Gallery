@@ -24,7 +24,8 @@ const BookmarksPage: FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { photos, setPhotos, handleLike, handleBookmark } = usePhotoOperations(
     [],
-    currentUserId
+    currentUserId,
+    true
   );
 
   const fetchBookmarks = useCallback(async () => {

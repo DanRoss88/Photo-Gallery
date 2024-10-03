@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { apiClientInstance } from "../Services/api"; // Adjust the import based on your project structure
 import { TogglePhotoResponse, Photo } from "../types";
 
-export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string | null) => {
+export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string | null, isBookmarksPage = false) => {
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
 
   const updatePhotoInState = useCallback((updatedPhoto: Photo) => {
@@ -11,20 +11,40 @@ export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string
     );
   }, []);
 
+  const removePhotoFromState = useCallback((photoId: string) => {
+    setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo._id !== photoId));
+  }, []);
+
   const handlePhotoOperation = useCallback(
     async (photoId: string, operation: 'like' | 'bookmark') => {
       if (!currentUserId) return;
 
       try {
         const endpoint = operation === 'like' ? 'like' : 'bookmark';
+
+        const isLikeOperation = operation === 'like';
+        const likeStatus = isLikeOperation ? !photos.find(photo => photo._id === photoId)?.likes.includes(currentUserId) : undefined;
+        
         const response = await apiClientInstance.put<TogglePhotoResponse>(
           `/photos/${endpoint}/${photoId}`,
-          {},
+          {
+            userId: currentUserId,
+            ...(isLikeOperation && { like: likeStatus }) 
+          },
           { withCredentials: true }
         );
 
         if (response.data && response.data.photo) {
-          updatePhotoInState(response.data.photo);
+          const updatedPhoto = response.data.photo;
+
+          if (operation === 'bookmark' && !updatedPhoto.bookmarkedBy.includes(currentUserId)) {
+            // If unbookmarking and we're on the bookmarks page, remove it from state
+            if (isBookmarksPage) {
+              removePhotoFromState(photoId);
+            }
+          } else {
+            updatePhotoInState(updatedPhoto);
+          }
         }
 
         return response.data;
@@ -32,7 +52,7 @@ export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string
         console.error(`Error toggling ${operation}:`, error);
       }
     },
-    [currentUserId, updatePhotoInState]
+    [currentUserId, updatePhotoInState, removePhotoFromState, isBookmarksPage, photos]
   );
 
   const handleLike = useCallback(
