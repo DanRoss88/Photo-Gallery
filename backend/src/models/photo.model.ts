@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { IUser } from "./user.model";
 export interface IPhoto extends Document {
   imageUrl: string;
   publicId?: string;
   description: string;
-  likes: mongoose.Types.ObjectId[];
-  bookmarks: mongoose.Types.ObjectId[];
-  user: mongoose.Types.ObjectId;
+  likes: mongoose.Types.ObjectId[] | IUser[];
+  bookmarks: mongoose.Types.ObjectId[]| IUser[];
+  user: mongoose.Types.ObjectId| IUser;
 }
 
 const PhotoSchema: Schema = new Schema({

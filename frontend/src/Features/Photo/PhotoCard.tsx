@@ -15,8 +15,7 @@ const PhotoCard: FC<PhotoCardProps> = ({
   photo,
   onLike,
   onBookmark,
-  currentUserId,
-    isLoggedIn,
+  currentUserId
 }) => {
   const isLiked = currentUserId ? photo.likes.includes(currentUserId) : false;
   const isBookmarked = currentUserId
@@ -40,7 +39,7 @@ const PhotoCard: FC<PhotoCardProps> = ({
         <IconButton
           aria-label="like"
           onClick={() => onLike(photo._id)}
-          disabled={!isLoggedIn}
+          disabled={!currentUserId}
         >
           <FavoriteIcon color={isLiked ? "secondary" : "action"} />
         </IconButton>
@@ -50,7 +49,7 @@ const PhotoCard: FC<PhotoCardProps> = ({
         <IconButton
           aria-label="bookmark"
           onClick={() => onBookmark(photo._id)}
-          disabled={!isLoggedIn}
+          disabled={!currentUserId}
         >
           <BookmarkIcon color={isBookmarked ? "primary" : "action"} />
         </IconButton>

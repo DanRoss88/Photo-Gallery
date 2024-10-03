@@ -6,6 +6,7 @@ export interface UserPayload {
   email: string;
 }
 
+
 export interface AuthRequest extends Request {
   user?: UserPayload;
 }

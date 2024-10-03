@@ -18,7 +18,7 @@ import { useTheme } from "@mui/material/styles";
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { user, isLoggedIn, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
         >
           Gallery
         </Button>
-        {isLoggedIn && user && (
+        {user && (
           <>
             <Button
               className={`navbar-button sixtyfour-convergence-new`}
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
           onClick={handleToggle}
           sx={{ mx: 1, borderRadius: theme.shape.borderRadius }}
         >
-          {isLoggedIn && user ? "Logout" : "Login / Register"}
+           {user ? "Logout" : "Login / Register"}
         </Button>
         <Popper
           open={open}
@@ -108,7 +108,7 @@ const Navbar: React.FC = () => {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow">
-                    {isLoggedIn ? (
+                    {user ? (
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     ) : (
                       <div>

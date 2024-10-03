@@ -4,18 +4,17 @@ import PhotoCard from "./PhotoCard";
 import { useAuth } from "../../Contexts/AuthContext";
 import { apiClientInstance } from "../../Services/api";
 import { PhotoResponse } from "../../types";
-import usePhotoCard from "../../Hooks/usePhotoCard";
+import usePhotoCard from "../../Hooks/usePhotoOperations";
 import usePagination from "../../Hooks/usePagination";
 
 const PhotoGallery: FC = () => {
-  const { isLoggedIn, user } = useAuth();
+  const { user } = useAuth();
   const currentUserId = user ? user._id : null;
   const { page, limit, handlePageChange, handleLimitChange } = usePagination();
   const [totalPhotos, setTotalPhotos] = useState(0);
   const { photos, setPhotos, handleLike, handleBookmark } = usePhotoCard(
     [],
-    currentUserId,
-    isLoggedIn
+    currentUserId
   );
 
   const fetchPhotos = useCallback(async () => {
@@ -56,7 +55,6 @@ const PhotoGallery: FC = () => {
               onLike={handleLike}
               onBookmark={handleBookmark}
               currentUserId={currentUserId}
-              isLoggedIn={isLoggedIn}
             />
           </Box>
         ))}

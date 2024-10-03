@@ -1,5 +1,4 @@
 export interface AuthContextType {
-    isLoggedIn: boolean;
     user: User | null;
     login: (email: string, password: string) => Promise<User>;
     register: (username: string, email: string, password: string) => Promise<User>;
@@ -43,7 +42,6 @@ export interface PhotoCardProps {
   onLike: (id: string) => void;
   onBookmark: (id: string) => void;
   currentUserId: string | null;
-  isLoggedIn: boolean;
 }
 export interface User {
   _id: string;
@@ -60,5 +58,11 @@ export interface LoginFormValues {
   email: string;
   password: string;
 }
+
+export interface User {
+    _id: string;
+    username: string;
+    email: string;
+  }
 
 export type AlertColor = 'success' | 'info' | 'warning' | 'error';

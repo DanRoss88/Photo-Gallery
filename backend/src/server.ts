@@ -18,16 +18,17 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.raw({ type: 'application/json' }));
 app.use(cors(
     {
         origin: 'http://localhost:3002',
         credentials: true
     }
 ));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.raw({ type: 'application/json' }));
+
 app.use(express.static('uploads'));
 app.use(globalErrorHandler);
 app.use((req, res, next) => {
