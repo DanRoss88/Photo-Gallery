@@ -25,13 +25,13 @@ const seedData = async () => {
   
           // Generate likes and bookmarks
           const likes = otherUsers.slice(0, Math.floor(Math.random() * otherUsers.length)).map(u => u._id);
-          const bookmarks = otherUsers.slice(0, Math.floor(Math.random() * otherUsers.length)).map(u => u._id);
+          const bookmarkedBy = otherUsers.slice(0, Math.floor(Math.random() * otherUsers.length)).map(u => u._id);
   
           return {
             ...photo,
             user: user._id, // Assign the user
             likes, // Assign random likes
-            bookmarks, // Assign random bookmarks
+            bookmarkedBy, // Assign random bookmarks
           } as IPhoto; // Type assertion to IPhoto
         })
       );

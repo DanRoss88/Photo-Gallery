@@ -1,11 +1,11 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { IPhoto } from './photo.model';
+
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;  
   username: string;
   email: string;
   password: string;
-  bookmarks: mongoose.Types.ObjectId[] | IPhoto[];
+  bookmarks: mongoose.Types.ObjectId[];
 }
 
 const UserSchema: Schema = new Schema({

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import {
   Card,
   CardMedia,
@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import { Bookmark, BookmarkBorder } from '@mui/icons-material';
 import { PhotoCardProps } from "../../types";
 
 const PhotoCard: FC<PhotoCardProps> = ({
@@ -19,7 +19,7 @@ const PhotoCard: FC<PhotoCardProps> = ({
 }) => {
   const isLiked = currentUserId ? photo.likes.includes(currentUserId) : false;
   const isBookmarked = currentUserId
-    ? photo.bookmarks.includes(currentUserId)
+    ? photo.bookmarkedBy.includes(currentUserId)
     : false;
 
   return (
@@ -46,15 +46,11 @@ const PhotoCard: FC<PhotoCardProps> = ({
         <Typography variant="body2" color="text.secondary">
           {photo.likes.length}
         </Typography>
-        <IconButton
-          aria-label="bookmark"
-          onClick={() => onBookmark(photo._id)}
-          disabled={!currentUserId}
-        >
-          <BookmarkIcon color={isBookmarked ? "primary" : "action"} />
+        <IconButton aria-label="bookmark" onClick={() => onBookmark(photo._id)}>
+          {isBookmarked ? <Bookmark color="primary" /> : <BookmarkBorder />}
         </IconButton>
         <Typography variant="body2" color="text.secondary">
-          {photo.bookmarks.length}
+          {photo.bookmarkedBy.length}
         </Typography>
       </CardActions>
     </Card>

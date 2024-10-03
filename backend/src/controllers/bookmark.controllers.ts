@@ -1,102 +1,81 @@
 import { Response } from "express";
 import { AuthRequest } from "../types";
 import User from "../models/user.model";
-import mongoose from "mongoose";
 import { AppError } from "../utils/errorHandler";
 import { catchAsync } from "../utils/errorHandler";
 import Photo from "../models/photo.model";
 
-export const getUserBookmarks = catchAsync(
-  async (req: AuthRequest, res: Response): Promise<void> => {
+export const getUserBookmarks = catchAsync(async (req: AuthRequest, res: Response) => {
     const userId = req.params.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
-
-    const totalBookmarks = await User.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
-      { $project: { bookmarkCount: { $size: "$bookmarks" } } },
-    ]);
-
-    const user = await User.findById(userId).populate({
-      path: "bookmarks",
-      options: { skip, limit },
-    });
-
-    if (!user) {
-      throw new AppError("User not found", 404);
+  
+    if (!userId) {
+      throw new AppError('User not authenticated', 401);
     }
-
-    const total = totalBookmarks[0]?.bookmarkCount || 0;
-
+  
+    const user = await User.findById(userId).populate({
+      path: 'bookmarks',
+      options: { sort: { createdAt: -1 }, skip, limit },
+      populate: { path: 'user', select: 'username' },
+    });
+  
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+  
+    const total = user.bookmarks.length;
+  
     res.status(200).json({
-      total,
-      page,
-      limit,
-      photos: user.bookmarks,
+      status: 'success',
+      results: user.bookmarks.length,
+      total: total,
+      data: { 
+        data: user.bookmarks 
+    },
     });
-  }
-);
+  });
 
-const toggleBookmarkOnPhotoAndUser = async (
-  photoId: string,
-  userId: string,
-  add: boolean
-) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const photoUpdate = add
-      ? { $addToSet: { bookmarks: userId } }
-      : { $pull: { bookmarks: userId } };
-
-    const updatedPhoto = await Photo.findByIdAndUpdate(photoId, photoUpdate, {
-      new: true,
-      session,
-    });
-    if (!updatedPhoto) throw new AppError("Photo not found", 404);
-
-    const userUpdate = add
-      ? { $addToSet: { bookmarks: photoId } }
-      : { $pull: { bookmarks: photoId } };
-
-    const updatedUser = await User.findByIdAndUpdate(userId, userUpdate, {
-      new: true,
-      session,
-    });
-    if (!updatedUser) throw new AppError("User not found", 404);
-
-    await session.commitTransaction();
-    return { updatedPhoto, updatedUser };
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-  }
-};
-
-export const toggleBookmarkPhoto = catchAsync(
-  async (req: AuthRequest, res: Response) => {
-    const { id: photoId } = req.params;
+export const toggleBookmark = catchAsync(async (req: AuthRequest, res: Response) => {
+    const photoId = req.params.id;
     const userId = req.user?._id;
-
-    const { bookmark } = req.body; // Expecting a boolean value for `bookmark`
-
-    if (!userId) throw new AppError("User not authenticated", 401);
-
-    // Toggle bookmark on both the photo and user
-    const { updatedPhoto, updatedUser } = await toggleBookmarkOnPhotoAndUser(
-      photoId,
-      userId.toString(),
-      bookmark
-    );
-
+  
+    if (!userId) {
+      throw new AppError('User not authenticated', 401);
+    }
+  
+    const photo = await Photo.findById(photoId);
+    if (!photo) {
+      throw new AppError('Photo not found', 404);
+    }
+  
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+  
+    const isBookmarked = photo.bookmarkedBy.includes(user._id);
+  
+    if (isBookmarked) {
+      // Remove bookmark
+      await Photo.findByIdAndUpdate(photoId, { $pull: { bookmarkedBy: userId } });
+      await User.findByIdAndUpdate(userId, { $pull: { bookmarks: photoId } });
+    } else {
+      // Add bookmark
+      await Photo.findByIdAndUpdate(photoId, { $addToSet: { bookmarkedBy: userId } });
+      await User.findByIdAndUpdate(userId, { $addToSet: { bookmarks: photoId } });
+    }
+  
+    const updatedPhoto = await Photo.findById(photoId).populate('user', 'username');
+  
     res.status(200).json({
-      message: bookmark
-        ? "Bookmarked successfully"
-        : "Unbookmarked successfully",
-      data: { photo: updatedPhoto, user: updatedUser },
+      status: 'success',
+      data: {
+        photo: updatedPhoto,
+        isBookmarked: !isBookmarked,
+      },
     });
-  }
-);
+  });
+
+

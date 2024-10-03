@@ -1,10 +1,14 @@
 export interface AuthContextType {
-    user: User | null;
-    login: (email: string, password: string) => Promise<User>;
-    register: (username: string, email: string, password: string) => Promise<User>;
-    logout: () => Promise<void>;
-    isLoading: boolean;
-  }
+  user: User | null;
+  login: (email: string, password: string) => Promise<User>;
+  register: (
+    username: string,
+    email: string,
+    password: string
+  ) => Promise<User>;
+  logout: () => Promise<void>;
+  isLoading: boolean;
+}
 
 export interface AuthResponse {
   token: string;
@@ -17,26 +21,28 @@ export interface Photo {
   imageUrl: string;
   description?: string;
   likes: string[];
-  bookmarks: string[];
+  bookmarkedBy: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface PhotoResponse {
-    status: string;
-    results: number;
-    data: {
-      photos: Photo[]; 
-      total: number;
-    };
-  }
+export interface PhotoBookmarkResponse {
+  status: string;
+  results: number;
+  total: number;
+  data: {
+    data: Photo[];
+  };
+}
 
-export interface BookmarkResponse {
-    status: string;
-    results: number;
-    data: {
-        bookmarks: Photo[];
-        total: number;
-    };
-}  
+export interface TogglePhotoResponse {
+  status: string;
+  data: {
+    photo: Photo;
+    isBookmarked?: boolean;
+  };
+}
+
 export interface PhotoCardProps {
   photo: Photo;
   onLike: (id: string) => void;
@@ -58,11 +64,10 @@ export interface LoginFormValues {
   email: string;
   password: string;
 }
-
 export interface User {
-    _id: string;
-    username: string;
-    email: string;
-  }
+  _id: string;
+  username: string;
+  email: string;
+}
 
-export type AlertColor = 'success' | 'info' | 'warning' | 'error';
+export type AlertColor = "success" | "info" | "warning" | "error";
