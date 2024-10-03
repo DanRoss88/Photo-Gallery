@@ -19,6 +19,7 @@ export interface Photo {
   _id: string;
   user: string;
   imageUrl: string;
+  tags?: string;
   description?: string;
   likes: string[];
   bookmarkedBy: string[];

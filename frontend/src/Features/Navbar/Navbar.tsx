@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
 
   return (
     <AppBar position="static" color="primary" elevation={0} className="app-bar">
-      <Toolbar>
+      <Toolbar sx={{ justifyContent: "center", height: "100px" }}>
         <Typography
           className={`navbar-title sixtyfour-convergence-new`}
           variant="h6"

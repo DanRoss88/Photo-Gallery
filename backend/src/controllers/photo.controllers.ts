@@ -46,3 +46,17 @@ export const toggleLikePhoto = catchAsync(
     });
   }
 );
+
+export const searchPhotos = catchAsync(async (req: Request, res: Response) => {
+    const { query } = req.query; // e.g., "nature"
+    const tags = typeof query === 'string' ? query.split(",") : [];
+    const photos = await Photo.find({
+      tags: { $in: tags }, 
+    });
+  
+    res.status(200).json({
+      status: "success",
+      results: photos.length,
+      data: { data: photos },
+    });
+  });

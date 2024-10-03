@@ -42,12 +42,14 @@ export const uploadPhoto = catchAsync(
 
     // Remove file from local disk after upload
     fs.unlinkSync(req.file.path);
-
+    const tags = req.body['tags[]']
+    console.log(tags);
     const newPhoto = {
       user: req.user._id,
       imageUrl: result.secure_url,
       publicId: result.public_id,
       description: req.body.description,
+      tags: tags
     };
     const createdPhoto = await Photo.create(newPhoto); // Save to the database (assuming you have a Photo model)
 
@@ -58,6 +60,7 @@ export const uploadPhoto = catchAsync(
           id: createdPhoto._id,
           imageUrl: result.secure_url, // Return the uploaded image URL
           description: req.body.description,
+          tags: tags
         },
       },
     });
