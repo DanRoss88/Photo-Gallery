@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
+import { Photo } from "../types";
 
 class APIClient {
   private instance: AxiosInstance;
@@ -29,12 +30,20 @@ class APIClient {
     return response.data;
   }
 
-  async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async post<T>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.instance.post<T>(url, data, config);
     return response.data;
   }
 
-  async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async put<T>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.instance.put<T>(url, data, config);
     return response.data;
   }
@@ -43,6 +52,21 @@ class APIClient {
     const response = await this.instance.delete<T>(url, config);
     return response.data;
   }
+
+  async searchPhotos(query: string): Promise<{ data: { data: Photo[] } }> {
+    return this.get(`/photos/search?query=${encodeURIComponent(query)}`);
+  }
+  async getUserPhotos(): Promise<{ data: { photos: Photo[] } }> {
+    return this.get('/photos/user');
+  }
+
+  async updatePhotoDetails(photoId: string, data: { description: string; tags: string[] }): Promise<{ data: { photo: Photo } }> {
+    return this.put(`/photos/${photoId}`, data);
+  }
+
+  async deletePhoto(photoId: string): Promise<void> {
+    return this.delete(`/photos/${photoId}`);
+  }
 }
 
-export const apiClientInstance = new APIClient("http://localhost:5000/api")
+export const apiClientInstance = new APIClient("http://localhost:5000/api");

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import { useForm } from "../../Hooks/useForm";
-import { Snackbar } from "../Photo/Snackbar";
+import { UserSnackbar } from "../Photo/Snackbar";
 import { FormField } from "./FormField";
 import { RegisterFormValues } from "../../types";
 import { formContainerStyles, formPaperStyles, formStyles } from "../../theme";
@@ -110,7 +110,7 @@ const Register: React.FC = () => {
           </Button>
         </Box>
       </Paper>
-      <Snackbar
+      <UserSnackbar
         open={snackbar.open}
         message={snackbar.message}
         severity={snackbar.severity}

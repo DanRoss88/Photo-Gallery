@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent } from "react";
+import { useState, useCallback, ChangeEvent, FC } from "react";
 import {
   Button,
   TextField,
@@ -12,7 +12,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ImageIcon from "@mui/icons-material/Image";
 import { apiClientInstance } from "../../Services/api";
 import { styled } from "@mui/material/styles";
-import { Snackbar } from "./Snackbar";
+import { UserSnackbar } from "./Snackbar";
 import { useForm } from "../../Hooks/useForm";
 import { AlertColor, Photo } from "../../types";
 
@@ -33,7 +33,7 @@ interface PhotoUploadFormValues {
   tags: string[];
 }
 
-const PhotoUpload: React.FC = () => {
+const PhotoUpload: FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState<{
@@ -116,9 +116,11 @@ const PhotoUpload: React.FC = () => {
     setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
+
+
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 500, mx: "auto", mt: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center">
+      <Typography className='sixtyfour-convergance-new' variant="h4" component="h1" gutterBottom align="center">
         Upload Photo
       </Typography>
       <Box
@@ -157,8 +159,7 @@ const PhotoUpload: React.FC = () => {
           <TextField
             label="Add Tag"
             value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setTagInput(e.target.value)}
             sx={{ flexGrow: 1, marginRight: '8px' }}
           />
           <Button variant="contained" onClick={handleAddTag}>
@@ -211,7 +212,7 @@ const PhotoUpload: React.FC = () => {
           </Box>
         </Box>
       )}
-      <Snackbar
+      <UserSnackbar
         open={snackbar.open}
         message={snackbar.message}
         severity={snackbar.severity}

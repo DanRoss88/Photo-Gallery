@@ -16,8 +16,8 @@ const SearchBar = ({handleSearch,  searchTerm, setSearchTerm}: SearchBarProps) =
            variant="outlined"
            placeholder="Search by hashtags..."
            value={searchTerm}
-           onChange={(e) => setSearchTerm(e.target.value)}
-           sx={{ width: "300px", marginRight: "8px" }} // Adjust width as needed
+           onChange={(e: any) => setSearchTerm(e.target.value)}
+           sx={{ width: "300px", marginRight: "8px", backgroundColor: "lightgrey" }} // Adjust width as needed
          />
          <Button type="submit" variant="contained" color="primary">
            Search

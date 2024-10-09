@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useForm } from "../../Hooks/useForm";
-import { Snackbar } from "../../Features/Photo/Snackbar";
+import { UserSnackbar } from "../../Features/Photo/Snackbar";
 import { FormField } from "../../Features/Auth/FormField";
 import { LoginFormValues } from "../../types";
 import { formContainerStyles, formPaperStyles, formStyles } from "../../theme";
@@ -66,7 +66,7 @@ const Login: React.FC = () => {
             }}
           >
             <LockOutlinedIcon sx={{ fontSize: 40, mb: 1 }} color="primary" />
-            <Typography variant="h4" component="h1" gutterBottom>
+            <Typography variant="h4" component="div" gutterBottom>
               Login
             </Typography>
           </Box>
@@ -99,7 +99,7 @@ const Login: React.FC = () => {
           </Button>
         </Box>
       </Paper>
-      <Snackbar
+      <UserSnackbar
         open={snackbar.open}
         message={snackbar.message}
         severity={snackbar.severity}

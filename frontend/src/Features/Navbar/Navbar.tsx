@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -44,15 +44,14 @@ const Navbar: React.FC = () => {
     <AppBar position="static" color="primary" elevation={0} className="app-bar">
       <Toolbar sx={{ justifyContent: "center", height: "100px" }}>
         <Typography
-          className={`navbar-title sixtyfour-convergence-new`}
-          variant="h6"
+          variant="h3"
           component="div"
-          sx={{ flexGrow: 1, fontWeight: "bold" }}
+          sx={{ flexGrow: 1 }}
         >
           Photo Gallery
         </Typography>
         <Button
-          className={`navbar-button sixtyfour-convergence-new`}
+          variant="outlined"
           color="inherit"
           component={RouterLink}
           to="/"
@@ -63,7 +62,7 @@ const Navbar: React.FC = () => {
         {user && (
           <>
             <Button
-              className={`navbar-button sixtyfour-convergence-new`}
+              variant="outlined"
               color="inherit"
               component={RouterLink}
               to="/bookmarks"
@@ -72,7 +71,7 @@ const Navbar: React.FC = () => {
               Bookmarks
             </Button>
             <Button
-              className={`navbar-button sixtyfour-convergence-new`}
+              variant='outlined'
               color="inherit"
               component={RouterLink}
               to="/upload"
@@ -83,7 +82,7 @@ const Navbar: React.FC = () => {
           </>
         )}
         <Button
-          className={`navbar-button sixtyfour-convergence-new`}
+          variant='outlined'
           color="inherit"
           onClick={handleToggle}
           sx={{ mx: 1, borderRadius: theme.shape.borderRadius }}

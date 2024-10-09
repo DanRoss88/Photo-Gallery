@@ -55,7 +55,14 @@ const BookmarksPage: FC = () => {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+          }}
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -72,10 +79,15 @@ const BookmarksPage: FC = () => {
     );
   }
 
-
   return (
     <Container maxWidth="lg">
-      <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: "center", my: 4 }}>
+      <Typography
+        fontFamily="siconvergence"
+        variant="h4"
+        component="h1"
+        gutterBottom
+        sx={{ textAlign: "center", my: 4 }}
+      >
         Your Bookmarks
       </Typography>
       {photos.length === 0 ? (
@@ -83,9 +95,20 @@ const BookmarksPage: FC = () => {
           <Typography>No bookmarks found.</Typography>
         </Box>
       ) : (
-        <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 4, py: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: 4,
+            py: 4,
+          }}
+        >
           {photos.map((photo) => (
-            <Box key={photo._id} sx={{ width: { xs: "100%", sm: "45%", md: "30%" } }}>
+            <Box
+              key={photo._id}
+              sx={{ width: { xs: "100%", sm: "45%", md: "30%" } }}
+            >
               <PhotoCard
                 photo={photo}
                 onLike={handleLike}
@@ -96,7 +119,15 @@ const BookmarksPage: FC = () => {
           ))}
         </Box>
       )}
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4, flexDirection: 'column' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: 4,
+          flexDirection: "column",
+        }}
+      >
         <Pagination
           count={Math.ceil(totalBookmarks / limit)}
           page={page}
@@ -104,9 +135,11 @@ const BookmarksPage: FC = () => {
           color="primary"
           sx={{ mb: 2 }}
         />
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="body2" sx={{ mr: 2 }}>Items per page:</Typography>
-          <Select value={limit} onChange={handleLimitChange} size="small">
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Typography variant="body2" sx={{ mr: 2 }}>
+            Items per page:
+          </Typography>
+          <Select value={limit} onChange={handleLimitChange}>
             <MenuItem value={10}>10</MenuItem>
             <MenuItem value={20}>20</MenuItem>
             <MenuItem value={50}>50</MenuItem>

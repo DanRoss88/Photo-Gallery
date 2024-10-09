@@ -7,9 +7,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Register from './Features/Auth/Register';
 import Login from './Features/Auth/Login';
 import Navbar from './Features/Navbar/Navbar';
-import PhotoUpload from './Features/Photo/PhotoUpload';
+import UploadPage from './Features/User/UserUploadsPage';
 import PhotoGallery from './Features/Photo/PhotoGallery';
 import BookmarksPage from './Features/User/BookmarksPage';
+
 
 
 const App: React.FC = () => {
@@ -23,7 +24,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<PhotoGallery />} />
           <Route path='/bookmarks' element={<BookmarksPage />} />
-          <Route path="/upload" element={<PhotoUpload />} />
+          <Route path="/upload" element={<UploadPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>
