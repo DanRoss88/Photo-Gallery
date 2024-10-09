@@ -8,6 +8,7 @@ import { globalErrorHandler } from "./utils/errorHandler";
 import { AppError } from "./utils/errorHandler";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 import userRoutes from "./routes/user.routes";
 import photoRoutes from "./routes/photo.routes";
 import verifyTokenRoute from "./routes/auth.routes";
@@ -18,6 +19,7 @@ const app = express();
 connectDB();
 
 // Middleware
+app.use(helmet());
 app.use(
   cors({
     origin: "http://localhost:3002",

@@ -27,12 +27,13 @@ const PhotoCard: FC<PhotoCardProps> = ({
       <CardMedia
         component="img"
         height="200"
+        width="200"
         image={photo.imageUrl}
         alt={photo.description || "Photo"}
+        loading="lazy"
       />
       <CardContent>
         <Typography
-          className="inconsolata-card-text"
           variant="body2"
           color="text.secondary"
         >

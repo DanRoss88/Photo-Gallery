@@ -6,6 +6,7 @@ import cloudinary from "../config/cloudinary";
 import Photo from "../models/photo.model";
 import { catchAsync, AppError } from "../utils/errorHandler";
 import { AuthRequest } from "../types";
+import sharp from "sharp";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -34,23 +35,38 @@ export const uploadPhoto = catchAsync(
     if (!req.user) {
       throw new AppError("User not authenticated", 401);
     }
+    const optimizedImagePath = path.join(
+      __dirname,
+      "../../uploads/optimized-" + req.file.filename
+    );
+    await sharp(req.file.path)
+      .resize(200, 200, { fit: "inside" })
+      .toFormat("jpeg", { quality: 80 })
+      .toFile(optimizedImagePath);
 
-    const result = await cloudinary.uploader.upload(req.file.path, {
+    const result = await cloudinary.uploader.upload(optimizedImagePath, {
       folder: `photo-app/user_photos/${req.user._id}`,
       resource_type: "image",
     });
 
     // Remove file from local disk after upload
     fs.unlinkSync(req.file.path);
-    const tags = req.body['tags[]']
-    const photoTags = Array.isArray(tags) ? tags : tags.split(',');
-    console.log(tags);
+    fs.unlinkSync(optimizedImagePath);
+
+    const tags = req.body["tags[]"];
+    const photoTags = Array.isArray(tags)
+      ? tags
+      : typeof tags === "string" && tags.trim() !== ""
+      ? tags.split(",").map((tag: string) => tag.trim())
+      : [];
+    console.log("Tags received:", tags);
+    // Create a new photo in the database with the uploaded image URL, public ID, and tags
     const newPhoto = {
       user: req.user._id,
       imageUrl: result.secure_url,
       publicId: result.public_id,
       description: req.body.description,
-      tags: photoTags
+      tags: photoTags,
     };
     const createdPhoto = await Photo.create(newPhoto); // Save to the database (assuming you have a Photo model)
 
@@ -61,7 +77,7 @@ export const uploadPhoto = catchAsync(
           id: createdPhoto._id,
           imageUrl: result.secure_url, // Return the uploaded image URL
           description: req.body.description,
-          tags: photoTags
+          tags: photoTags,
         },
       },
     });

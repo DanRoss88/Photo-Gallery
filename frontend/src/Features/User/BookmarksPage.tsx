@@ -82,9 +82,8 @@ const BookmarksPage: FC = () => {
   return (
     <Container maxWidth="lg">
       <Typography
-        fontFamily="siconvergence"
         variant="h4"
-        component="h1"
+        component="div"
         gutterBottom
         sx={{ textAlign: "center", my: 4 }}
       >
@@ -92,7 +91,9 @@ const BookmarksPage: FC = () => {
       </Typography>
       {photos.length === 0 ? (
         <Box sx={{ textAlign: "center", mt: 4 }}>
-          <Typography>No bookmarks found.</Typography>
+          <Typography variant="h4" component="div" gutterBottom>
+            No bookmarks found.
+          </Typography>
         </Box>
       ) : (
         <Box
@@ -136,10 +137,10 @@ const BookmarksPage: FC = () => {
           sx={{ mb: 2 }}
         />
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="body2" sx={{ mr: 2 }}>
-            Items per page:
+          <Typography variant="h6" sx={{ mr: 2 }}>
+            Photos per page:
           </Typography>
-          <Select value={limit} onChange={handleLimitChange}>
+          <Select value={limit} size="small" onChange={handleLimitChange}>
             <MenuItem value={10}>10</MenuItem>
             <MenuItem value={20}>20</MenuItem>
             <MenuItem value={50}>50</MenuItem>

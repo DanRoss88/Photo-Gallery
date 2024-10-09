@@ -113,7 +113,7 @@ export const updatePhotoDetails = catchAsync(
     }
 
     photo.description = description;
-    photo.tags = Array.isArray(tags) ? tags : tags.split(',');
+    photo.tags = Array.isArray(tags) ? tags : tags.split(',').map((tag: string) => tag.trim());
 
     await photo.save();
 

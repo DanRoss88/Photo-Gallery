@@ -64,9 +64,8 @@ const PhotoUpload: FC = () => {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("description", values.description);
-    tags.forEach(tag => {
-        formData.append("tags[]", tag);
-      });
+    const tagsString = tags.join(", ");
+  formData.append("tags", tagsString);
 
     try {
       const response = await apiClientInstance.post<Photo>(
@@ -105,12 +104,13 @@ const PhotoUpload: FC = () => {
       onSubmit: handleUpload,
     });
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags((prev) => [...prev, tagInput.trim()]);
-      setTagInput("");
-    }
-  };
+    const handleAddTag = () => {
+      const trimmedTag = tagInput.trim();
+      if (trimmedTag && !tags.includes(trimmedTag)) {
+        setTags((prev) => [...prev, trimmedTag]);
+        setTagInput("");
+      }
+    };
 
   const handleRemoveTag = (tagToRemove: string) => {
     setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
@@ -167,15 +167,15 @@ const PhotoUpload: FC = () => {
           </Button>
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2 }}>
-          {tags.map((tag) => (
-            <Chip
-              key={tag}
-              label={tag}
-              onDelete={() => handleRemoveTag(tag)}
-              sx={{ margin: '4px' }}
-            />
-          ))}
-        </Box>
+  {tags.map((tag: string) => (
+    <Chip
+      key={tag}
+      label={tag}
+      onDelete={() => handleRemoveTag(tag)}
+      sx={{ margin: '4px' }}
+    />
+  ))}
+</Box>
         <Button
           type="submit"
           variant="contained"

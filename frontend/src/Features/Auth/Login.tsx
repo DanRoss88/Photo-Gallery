@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, FC } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -16,7 +16,7 @@ import { formContainerStyles, formPaperStyles, formStyles } from "../../theme";
 import { AlertColor } from "../../types";
 import { useAuth } from "../../Contexts/AuthContext";
 
-const Login: React.FC = () => {
+const Login: FC = () => {
     const navigate = useNavigate();
     const [snackbar, setSnackbar] = useState<{
       open: boolean;

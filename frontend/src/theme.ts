@@ -89,15 +89,12 @@ export const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
-          clip: "rect(0 0 0 0)",
-          clipPath: "inset(50%)",
-          height: 1,
+          color: "#999999",
+          borderRadius: "4px",
+          padding: "8px",
           overflow: "hidden",
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          whiteSpace: "nowrap",
-          width: 1,
+          backgroundColor: "#f5f5f5",
+
         },
       },
     },
@@ -150,6 +147,16 @@ export const theme = createTheme({
         },
       },
     },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: "#999999",    
+          "&.Mui-focused": {
+            color: "#ff4081",      
+          },
+        },
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -162,7 +169,7 @@ export const theme = createTheme({
               borderColor: "rgba(0, 0, 0, 0.87)",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#3f51b5",
+              borderColor: "#ff4081",
             },
           },
           "& .MuiInputBase-input": {
