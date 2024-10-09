@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect , FC } from 'react';
 import { AuthProvider } from './Contexts/AuthContext';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
@@ -13,8 +13,24 @@ import BookmarksPage from './Features/User/BookmarksPage';
 
 
 
-const App: React.FC = () => {
- 
+const App: FC = () => {
+  useEffect(() => {
+    const handleResize = () => {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    };
+
+    // Call the function on mount
+    handleResize();
+
+    // Add the resize event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   return (
     <AuthProvider>
     <ThemeProvider theme={theme}>

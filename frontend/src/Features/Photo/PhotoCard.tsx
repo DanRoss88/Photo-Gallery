@@ -8,14 +8,14 @@ import {
   IconButton,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Bookmark, BookmarkBorder } from '@mui/icons-material';
+import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { PhotoCardProps } from "../../types";
 
 const PhotoCard: FC<PhotoCardProps> = ({
   photo,
   onLike,
   onBookmark,
-  currentUserId
+  currentUserId,
 }) => {
   const isLiked = currentUserId ? photo.likes.includes(currentUserId) : false;
   const isBookmarked = currentUserId
@@ -31,7 +31,11 @@ const PhotoCard: FC<PhotoCardProps> = ({
         alt={photo.description || "Photo"}
       />
       <CardContent>
-        <Typography className="inconsolata-card-text" variant="body2" color="text.secondary">
+        <Typography
+          className="inconsolata-card-text"
+          variant="body2"
+          color="text.secondary"
+        >
           {photo.description}
         </Typography>
       </CardContent>

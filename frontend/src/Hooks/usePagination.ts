@@ -5,12 +5,12 @@ export const usePagination = (initialPage: number = 1, initialLimit: number = 10
     const [page, setPage] = useState(initialPage);
     const [limit, setLimit] = useState(initialLimit);
   
-    const handlePageChange = useCallback((_event: ChangeEvent<unknown>, value: number) => {
+    const handlePageChange = useCallback((_event: ChangeEvent<unknown> | null, value: number) => {
       setPage(value);
     }, []);
   
-    const handleLimitChange = useCallback((event: SelectChangeEvent<number>) => {
-      const newLimit = Number(event.target.value);
+    const handleLimitChange = useCallback((event: SelectChangeEvent<number> | number) => {
+      const newLimit = typeof event === 'number' ? event : Number(event.target.value);
       setLimit(newLimit);
       setPage(1);
     }, []);

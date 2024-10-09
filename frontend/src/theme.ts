@@ -69,11 +69,11 @@ export const theme = createTheme({
           borderRadius: 20,
 
           transition: "transform 0.3s ease, color 0.3s ease",
-          fontSize: ".9rem", // Smaller font size for buttons
-          padding: "4px 8px", // Adjust padding for smaller buttons
+          fontSize: ".9rem", 
+          padding: "4px 8px", 
           "&:hover": {
-            transform: "scale(1.05) rotate(-3deg)", // Hover effect
-            color: "#ff4081", // Change color on hover
+            transform: "scale(1.05) rotate(-3deg)", 
+            color: "#ff4081",
           },
         },
       },
@@ -81,7 +81,8 @@ export const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          height: "100px", // Increase height of AppBar
+          height: "100px", 
+          minWidth: '100vw',
         },
       },
     },
@@ -173,10 +174,11 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          backgroundColor: '#4c5456',
+          boxShadow: "0 4px 6px rgb(76, 84, 86)",
           transition: "box-shadow 0.3s ease-in-out",
           "&:hover": {
-            boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
+            boxShadow: "0 6px 12px rgb(76, 84, 86)",
           },
         },
       },
