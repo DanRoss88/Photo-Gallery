@@ -29,19 +29,19 @@ export const globalErrorHandler = (err: CustomError, req: Request, res: Response
       status: 'error',
       error: err,
       message: err.message,
-      stack: err.stack
+      stack: err.stack,
     });
   } else {
     if (err.isOperational) {
       res.status(err.statusCode).json({
         status: 'error',
-        message: err.message
+        message: err.message,
       });
     } else {
       console.error('ERROR 💥', err);
       res.status(500).json({
         status: 'error',
-        message: 'Something went very wrong!'
+        message: 'Something went very wrong!',
       });
     }
   }

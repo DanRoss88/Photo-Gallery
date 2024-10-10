@@ -30,26 +30,26 @@ export const seedPhotos = [
   {
     imageUrl: 'https://loremflickr.com/400/400/nature',
     description: 'Beautiful nature landscape',
-    likes: [], 
+    likes: [],
     bookmarks: [],
   },
   {
     imageUrl: 'https://loremflickr.com/400/400/city',
     description: 'Urban cityscape at night',
-    likes: [], 
+    likes: [],
     bookmarks: [],
   },
   {
     imageUrl: 'https://loremflickr.com/400/400/food',
     description: 'Delicious gourmet meal',
     likes: [],
-    bookmarks: [], 
+    bookmarks: [],
   },
   {
     imageUrl: 'https://loremflickr.com/400/400/technology',
     description: 'Modern technology gadgets',
-    likes: [], 
-    bookmarks: [], 
+    likes: [],
+    bookmarks: [],
   },
   {
     imageUrl: 'https://loremflickr.com/400/400/animals',

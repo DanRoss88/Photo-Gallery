@@ -1,7 +1,14 @@
 import express from 'express';
-import {auth} from '../middleware/auth';
+import { auth } from '../middleware/auth';
 import { uploadPhoto, upload } from '../middleware/upload';
-import { getAllPhotos, toggleLikePhoto, searchPhotos, getUserPhotos, updatePhotoDetails, deletePhoto } from '../controllers/photo.controllers';
+import {
+  getAllPhotos,
+  toggleLikePhoto,
+  searchPhotos,
+  getUserPhotos,
+  updatePhotoDetails,
+  deletePhoto,
+} from '../controllers/photo.controllers';
 import { toggleBookmark, getUserBookmarks } from '../controllers/bookmark.controllers';
 
 const router = express.Router();
