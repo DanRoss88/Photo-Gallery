@@ -1,11 +1,7 @@
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<User>;
-  register: (
-    username: string,
-    email: string,
-    password: string
-  ) => Promise<User>;
+  register: (username: string, email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }
@@ -50,6 +46,11 @@ export interface PhotoCardProps {
   onBookmark: (id: string) => void;
   currentUserId: string | null;
 }
+
+export interface PhotoUploadFormValues {
+  description: string;
+  tags: string[];
+}
 export interface User {
   _id: string;
   email: string;
@@ -71,4 +72,4 @@ export interface User {
   email: string;
 }
 
-export type AlertColor = "success" | "info" | "warning" | "error";
+export type AlertColor = 'success' | 'info' | 'warning' | 'error';

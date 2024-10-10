@@ -1,4 +1,4 @@
-import {FC }from 'react';
+import { FC } from 'react';
 import { Box, Typography, Divider } from '@mui/material';
 import PhotoUpload from '../Photo/PhotoUpload';
 import UserPhotos from '../User/UserPhotos';

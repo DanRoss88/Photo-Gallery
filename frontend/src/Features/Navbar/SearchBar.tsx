@@ -1,5 +1,5 @@
-import { FormEvent, FC } from 'react'
-import { Button, TextField, Box } from '@mui/material'
+import { FormEvent, FC } from 'react';
+import { Button, TextField, Box } from '@mui/material';
 import { searchInputStyles } from '../../theme';
 interface SearchBarProps {
   handleSearch: (e: FormEvent<HTMLFormElement>) => void;

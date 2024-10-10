@@ -1,19 +1,8 @@
-import { useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Popper,
-  Paper,
-  Grow,
-  ClickAwayListener,
-  MenuList,
-  MenuItem,
-} from "@mui/material";
-import { useAuth } from "../../Contexts/AuthContext";
-import { useTheme } from "@mui/material/styles";
+import { useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button, Popper, Paper, Grow, ClickAwayListener, MenuList, MenuItem } from '@mui/material';
+import { useAuth } from '../../Contexts/AuthContext';
+import { useTheme } from '@mui/material/styles';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -37,71 +26,37 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     logout();
     setOpen(false);
-    navigate("/");
+    navigate('/');
   };
 
   return (
     <AppBar position="static" color="primary" elevation={0} className="app-bar">
-      <Toolbar sx={{ justifyContent: "center", height: "100px" }}>
-        <Typography
-          variant="h3"
-          component="div"
-          sx={{ flexGrow: 1 }}
-        >
+      <Toolbar sx={{ justifyContent: 'center', height: '100px' }}>
+        <Typography variant="h3" component="div" sx={{ flexGrow: 1 }}>
           Photo Gallery
         </Typography>
-        <Button
-          variant="outlined"
-          color="inherit"
-          component={RouterLink}
-          to="/"
-          sx={{ mx: 1 }}
-        >
+        <Button variant="outlined" color="inherit" component={RouterLink} to="/" sx={{ mx: 1 }}>
           Gallery
         </Button>
         {user && (
           <>
-            <Button
-              variant="outlined"
-              color="inherit"
-              component={RouterLink}
-              to="/bookmarks"
-              sx={{ mx: 1 }}
-            >
+            <Button variant="outlined" color="inherit" component={RouterLink} to="/bookmarks" sx={{ mx: 1 }}>
               Bookmarks
             </Button>
-            <Button
-              variant='outlined'
-              color="inherit"
-              component={RouterLink}
-              to="/upload"
-              sx={{ mx: 1 }}
-            >
+            <Button variant="outlined" color="inherit" component={RouterLink} to="/upload" sx={{ mx: 1 }}>
               Upload
             </Button>
           </>
         )}
-        <Button
-          variant='outlined'
-          color="inherit"
-          onClick={handleToggle}
-          sx={{ mx: 1, borderRadius: theme.shape.borderRadius }}
-        >
-           {user ? "Logout" : "Login / Register"}
+        <Button variant="outlined" color="inherit" onClick={handleToggle} sx={{ mx: 1, borderRadius: theme.shape.borderRadius }}>
+          {user ? 'Logout' : 'Login / Register'}
         </Button>
-        <Popper
-          open={open}
-          anchorEl={anchorEl}
-          role={undefined}
-          transition
-          disablePortal
-        >
+        <Popper open={open} anchorEl={anchorEl} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}
               style={{
-                transformOrigin:
-                  placement === "bottom" ? "center top" : "center bottom",
+                transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
               }}
             >
               <Paper>
@@ -111,18 +66,10 @@ const Navbar: React.FC = () => {
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     ) : (
                       <div>
-                        <MenuItem
-                          component={RouterLink}
-                          to="/login"
-                          onClick={handleClose}
-                        >
+                        <MenuItem component={RouterLink} to="/login" onClick={handleClose}>
                           Login
                         </MenuItem>
-                        <MenuItem
-                          component={RouterLink}
-                          to="/register"
-                          onClick={handleClose}
-                        >
+                        <MenuItem component={RouterLink} to="/register" onClick={handleClose}>
                           Register
                         </MenuItem>
                       </div>

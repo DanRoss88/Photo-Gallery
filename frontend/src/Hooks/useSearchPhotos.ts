@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { apiClientInstance } from '../Services/api';
+import { apiClient } from '../Services/api';
 import { Photo } from '../types';
 
 export const useSearchPhotos = () => {
@@ -11,7 +11,7 @@ export const useSearchPhotos = () => {
     setIsSearching(true);
     setSearchError(null);
     try {
-      const response = await apiClientInstance.get<{ data: { data: Photo[] } }>(`/photos/search?query=${query}`);
+      const response = await apiClient.get<{ data: { data: Photo[] } }>(`/photos/search?query=${query}`);
       setSearchResults(response.data.data);
     } catch (error) {
       console.error('Error searching photos:', error);

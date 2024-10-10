@@ -6,11 +6,4 @@ interface FormFieldProps extends Omit<TextFieldProps, 'onChange'> {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const FormField: FC<FormFieldProps> = ({ name, onChange, ...props }) => (
-  <TextField
-    fullWidth
-    name={name}
-    onChange={onChange}
-    {...props}
-  />
-);
+export const FormField: FC<FormFieldProps> = ({ name, onChange, ...props }) => <TextField fullWidth name={name} onChange={onChange} {...props} />;

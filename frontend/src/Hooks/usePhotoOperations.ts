@@ -1,14 +1,12 @@
-import { useState, useCallback } from "react";
-import { apiClientInstance } from "../Services/api"; // Adjust the import based on your project structure
-import { TogglePhotoResponse, Photo } from "../types";
+import { useState, useCallback } from 'react';
+import { apiClient } from '../Services/api'; // Adjust the import based on your project structure
+import { TogglePhotoResponse, Photo } from '../types';
 
 export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string | null, isBookmarksPage = false) => {
   const [photos, setPhotos] = useState<Photo[]>(initialPhotos);
 
   const updatePhotoInState = useCallback((updatedPhoto: Photo) => {
-    setPhotos((prevPhotos) =>
-      prevPhotos.map((photo) => (photo._id === updatedPhoto._id ? updatedPhoto : photo))
-    );
+    setPhotos((prevPhotos) => prevPhotos.map((photo) => (photo._id === updatedPhoto._id ? updatedPhoto : photo)));
   }, []);
 
   const removePhotoFromState = useCallback((photoId: string) => {
@@ -23,13 +21,13 @@ export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string
         const endpoint = operation === 'like' ? 'like' : 'bookmark';
 
         const isLikeOperation = operation === 'like';
-        const likeStatus = isLikeOperation ? !photos.find(photo => photo._id === photoId)?.likes.includes(currentUserId) : undefined;
-        
-        const response = await apiClientInstance.put<TogglePhotoResponse>(
+        const likeStatus = isLikeOperation ? !photos.find((photo) => photo._id === photoId)?.likes.includes(currentUserId) : undefined;
+
+        const response = await apiClient.put<TogglePhotoResponse>(
           `/photos/${endpoint}/${photoId}`,
           {
             userId: currentUserId,
-            ...(isLikeOperation && { like: likeStatus }) 
+            ...(isLikeOperation && { like: likeStatus }),
           },
           { withCredentials: true }
         );
@@ -55,15 +53,9 @@ export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string
     [currentUserId, updatePhotoInState, removePhotoFromState, isBookmarksPage, photos]
   );
 
-  const handleLike = useCallback(
-    (photoId: string) => handlePhotoOperation(photoId, 'like'),
-    [handlePhotoOperation]
-  );
+  const handleLike = useCallback((photoId: string) => handlePhotoOperation(photoId, 'like'), [handlePhotoOperation]);
 
-  const handleBookmark = useCallback(
-    (photoId: string) => handlePhotoOperation(photoId, 'bookmark'),
-    [handlePhotoOperation]
-  );
+  const handleBookmark = useCallback((photoId: string) => handlePhotoOperation(photoId, 'bookmark'), [handlePhotoOperation]);
 
   return { photos, setPhotos, handleLike, handleBookmark, updatePhotoInState };
 };

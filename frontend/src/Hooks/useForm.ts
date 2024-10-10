@@ -11,9 +11,8 @@ export const useForm = <T extends Record<string, any>>({ initialValues, onSubmit
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setValues(prevValues => ({ ...prevValues, [name]: value }));
+    setValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
-
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
