@@ -6,27 +6,15 @@ import {
   Box,
   Paper,
   CircularProgress,
-  Chip
+  Chip,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ImageIcon from "@mui/icons-material/Image";
 import { apiClientInstance } from "../../Services/api";
-import { styled } from "@mui/material/styles";
 import { UserSnackbar } from "./Snackbar";
 import { useForm } from "../../Hooks/useForm";
 import { AlertColor, Photo } from "../../types";
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+import { VisuallyHiddenInput } from "../../theme";
 
 interface PhotoUploadFormValues {
   description: string;
@@ -36,15 +24,12 @@ interface PhotoUploadFormValues {
 const PhotoUpload: FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
     severity: AlertColor;
-  }>({
-    open: false,
-    message: "",
-    severity: "success", // Default severity
-  });
+  }>({ open: false, message: "", severity: "success" });
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
   const [uploadedPhotos, setUploadedPhotos] = useState<Photo[]>([]);
@@ -52,7 +37,14 @@ const PhotoUpload: FC = () => {
   const handleFileChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files[0]) {
-        setFile(event.target.files[0]);
+        const selectedFile = event.target.files[0];
+        setFile(selectedFile);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result as string);
+        };
+        reader.readAsDataURL(selectedFile);
       }
     },
     []
@@ -65,7 +57,7 @@ const PhotoUpload: FC = () => {
     formData.append("image", file);
     formData.append("description", values.description);
     const tagsString = tags.join(", ");
-  formData.append("tags", tagsString);
+    formData.append("tags", tagsString);
 
     try {
       const response = await apiClientInstance.post<Photo>(
@@ -83,6 +75,7 @@ const PhotoUpload: FC = () => {
       setUploadedPhotos((prev) => [...prev, response]);
       setFile(null);
       setTags([]);
+      setPreviewUrl(null);
       setSnackbar({
         open: true,
         message: "Photo uploaded successfully!",
@@ -104,23 +97,31 @@ const PhotoUpload: FC = () => {
       onSubmit: handleUpload,
     });
 
-    const handleAddTag = () => {
-      const trimmedTag = tagInput.trim();
-      if (trimmedTag && !tags.includes(trimmedTag)) {
-        setTags((prev) => [...prev, trimmedTag]);
-        setTagInput("");
-      }
-    };
+  const handleAddTag = () => {
+    const trimmedTag = tagInput.trim();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags((prev) => [...prev, trimmedTag]);
+      setTagInput("");
+    }
+  };
 
   const handleRemoveTag = (tagToRemove: string) => {
     setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
-
-
   return (
-    <Paper elevation={3} sx={{ p: 4, maxWidth: 500, mx: "auto", mt: 4 }}>
-      <Typography className='sixtyfour-convergance-new' variant="h4" component="h1" gutterBottom align="center">
+    <Paper
+      elevation={3}
+      sx={{
+        p: 4,
+        maxWidth: 500,
+        mx: "auto",
+        mt: 4,
+        boxShadow:
+          "0px 4px 20px rgba(255, 255, 255, 0.6), 0px 4px 10px rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <Typography variant="h3" gutterBottom align="center" sx={{ mb: 4 }}>
         Upload Photo
       </Typography>
       <Box
@@ -141,6 +142,15 @@ const PhotoUpload: FC = () => {
             accept="image/*"
           />
         </Button>
+        {previewUrl && (
+          <Box sx={{ mt: 2, textAlign: "center" }}>
+            <img
+              src={previewUrl}
+              alt="Preview"
+              style={{ maxWidth: "100%", maxHeight: "200px", objectFit: "contain" }}
+            />
+          </Box>
+        )}
         {file && (
           <Typography variant="body2" align="center">
             Selected file: {file.name}
@@ -155,27 +165,29 @@ const PhotoUpload: FC = () => {
           value={values.description}
           onChange={handleChange}
         />
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <TextField
             label="Add Tag"
             value={tagInput}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setTagInput(e.target.value)}
-            sx={{ flexGrow: 1, marginRight: '8px' }}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTagInput(e.target.value)
+            }
+            sx={{ flexGrow: 1, marginRight: "8px" }}
           />
           <Button variant="contained" onClick={handleAddTag}>
             Add
           </Button>
         </Box>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', mt: 2 }}>
-  {tags.map((tag: string) => (
-    <Chip
-      key={tag}
-      label={tag}
-      onDelete={() => handleRemoveTag(tag)}
-      sx={{ margin: '4px' }}
-    />
-  ))}
-</Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", mt: 2 }}>
+          {tags.map((tag: string) => (
+            <Chip
+              key={tag}
+              label={tag}
+              onDelete={() => handleRemoveTag(tag)}
+              sx={{ margin: "4px" }}
+            />
+          ))}
+        </Box>
         <Button
           type="submit"
           variant="contained"
@@ -201,12 +213,26 @@ const PhotoUpload: FC = () => {
       {uploadedPhotos.length > 0 && (
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6">Your Uploaded Photos:</Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {uploadedPhotos.map((photo) => (
-              <Box key={photo._id} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <img src={photo.imageUrl} alt={photo.description} style={{ maxWidth: '100%', height: 'auto' }} />
+              <Box
+                key={photo._id}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={photo.imageUrl}
+                  alt={photo.description}
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
                 <Typography variant="body2">{photo.description}</Typography>
-                <Typography variant="body2">Tags: {Array.isArray(photo?.tags) ? photo.tags.join(', ') : ''}</Typography>
+                <Typography variant="body2">
+                  Tags:{" "}
+                  {Array.isArray(photo?.tags) ? photo.tags.join(", ") : ""}
+                </Typography>
               </Box>
             ))}
           </Box>

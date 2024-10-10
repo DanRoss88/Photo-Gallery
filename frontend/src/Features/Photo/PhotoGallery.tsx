@@ -11,8 +11,6 @@ import {
   Box,
   Paper,
   Pagination,
-  Select,
-  MenuItem,
   Typography,
   Tab,
   Tabs,
@@ -26,20 +24,30 @@ import { apiClientInstance } from "../../Services/api";
 import { PhotoBookmarkResponse, Photo } from "../../types";
 import usePhotoOperations from "../../Hooks/usePhotoOperations";
 import usePagination from "../../Hooks/usePagination";
-import {
-  searchContainerStyles,
-  searchFormStyles,
-  searchResultsStyles,
-} from "../../theme";
+import { searchContainerStyles, searchFormStyles, searchResultsStyles } from "../../theme";
+import { ItemsPerPageSelect } from "./ItemsPerPageSelect";
+
+interface EmojiProps {
+  symbol: string;
+  label?: string;
+};
+
+const Emoji: FC<EmojiProps> = ({ symbol, label }) => (
+  <span
+    className="emoji"
+    role="img"
+    aria-label={label ? label : ""}
+    aria-hidden={label ? "false" : "true"}
+  >
+    {symbol}
+  </span>
+);
 
 const PhotoGallery: FC = () => {
   const { user } = useAuth();
   const currentUserId = user ? user._id : null;
   const { page, limit, handlePageChange, handleLimitChange } = usePagination();
-  const { photos, setPhotos, handleLike, handleBookmark } = usePhotoOperations(
-    [],
-    currentUserId
-  );
+  const { photos, setPhotos, handleLike, handleBookmark } = usePhotoOperations([],currentUserId);
   const [activeTab, setActiveTab] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const { searchResults, isSearching, searchError, searchPhotos } =
@@ -86,7 +94,7 @@ const PhotoGallery: FC = () => {
           />
         ))
       ) : (
-        <Typography>No photos available</Typography>
+        <><Typography variant="h6">No photos</Typography><Emoji symbol="U+1F911" label="smiley-sad"/></>
       )}
     </Box>
   );
@@ -95,8 +103,8 @@ const PhotoGallery: FC = () => {
     <Container maxWidth="lg" sx={searchContainerStyles}>
       <Paper elevation={3}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
-          <Tab label="Gallery" />
-          <Tab label="Search Results" />
+          <Tab sx={{ mb: 1, mt: 1 }} label="Gallery" />
+          <Tab sx={{ mb: 1, mt: 1 }} label="Search Results" />
         </Tabs>
 
         <Box sx={searchFormStyles}>
@@ -126,16 +134,11 @@ const PhotoGallery: FC = () => {
                 color="primary"
                 sx={{ mb: 2 }}
               />
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="body2" sx={{ mr: 2 }}>
-                  Items per page:
-                </Typography>
-                <Select value={limit} onChange={handleLimitChange}>
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
-                </Select>
-              </Box>
+              <ItemsPerPageSelect
+                value={limit}
+                onChange={handleLimitChange}
+                options={[10, 20, 50]}
+              />
             </Box>
           </>
         )}

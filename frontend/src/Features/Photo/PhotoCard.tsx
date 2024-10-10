@@ -34,7 +34,7 @@ const PhotoCard: FC<PhotoCardProps> = ({
       />
       <CardContent>
         <Typography
-          variant="body2"
+          variant="body1"
           color="text.secondary"
         >
           {photo.description}

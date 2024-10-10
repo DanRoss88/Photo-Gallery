@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import { SxProps, Theme } from "@mui/material";
+import styled from "@emotion/styled";
 
 export const theme = createTheme({
   palette: {
@@ -69,10 +70,10 @@ export const theme = createTheme({
           borderRadius: 20,
 
           transition: "transform 0.3s ease, color 0.3s ease",
-          fontSize: ".9rem", 
-          padding: "4px 8px", 
+          fontSize: ".9rem",
+          padding: "4px 8px",
           "&:hover": {
-            transform: "scale(1.05) rotate(-3deg)", 
+            transform: "scale(1.05) rotate(-3deg)",
             color: "#ff4081",
           },
         },
@@ -81,8 +82,8 @@ export const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          height: "100px", 
-          minWidth: '100vw',
+          height: "100px",
+          minWidth: "100vw",
         },
       },
     },
@@ -94,7 +95,6 @@ export const theme = createTheme({
           padding: "8px",
           overflow: "hidden",
           backgroundColor: "#f5f5f5",
-
         },
       },
     },
@@ -119,9 +119,6 @@ export const theme = createTheme({
     },
     MuiTabs: {
       styleOverrides: {
-        root: {
-          borderBottom: "1px solid",
-        },
         indicator: {
           backgroundColor: "#757de8",
           "&:hover": {
@@ -150,9 +147,9 @@ export const theme = createTheme({
     MuiFormLabel: {
       styleOverrides: {
         root: {
-          color: "#999999",    
+          color: "#999999",
           "&.Mui-focused": {
-            color: "#ff4081",      
+            color: "#ff4081",
           },
         },
       },
@@ -181,7 +178,7 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: '#4c5456',
+          backgroundColor: "#4c5456",
           boxShadow: "0 4px 6px rgb(76, 84, 86)",
           transition: "box-shadow 0.3s ease-in-out",
           "&:hover": {
@@ -224,6 +221,7 @@ export const searchContainerStyles: SxProps<Theme> = {
   marginTop: 4,
   marginBottom: 4,
 };
+
 export const searchFormStyles: SxProps<Theme> = {
   display: "flex",
   justifyContent: "center",
@@ -240,3 +238,15 @@ export const searchResultsStyles: SxProps<Theme> = {
   gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
   gap: 4,
 };
+
+export const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});

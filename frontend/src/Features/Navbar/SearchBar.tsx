@@ -9,7 +9,7 @@ interface SearchBarProps {
 
 const SearchBar: FC<SearchBarProps> = ({ handleSearch, searchTerm, setSearchTerm }) => {
   return (
-    <Box component="form" onSubmit={handleSearch} sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+    <Box component="form" onSubmit={handleSearch} sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 2 }}>
       <TextField
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
@@ -17,7 +17,7 @@ const SearchBar: FC<SearchBarProps> = ({ handleSearch, searchTerm, setSearchTerm
         variant="outlined"
         sx={searchInputStyles}
       />
-      <Button type="submit" variant="contained" color="primary">
+      <Button type="submit" variant="contained">
         Search
       </Button>
     </Box>

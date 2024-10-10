@@ -3,8 +3,6 @@ import {
   Container,
   Box,
   Pagination,
-  Select,
-  MenuItem,
   CircularProgress,
   Typography,
 } from "@mui/material";
@@ -14,6 +12,7 @@ import usePhotoOperations from "../../Hooks/usePhotoOperations";
 import usePagination from "../../Hooks/usePagination";
 import PhotoCard from "../Photo/PhotoCard";
 import { PhotoBookmarkResponse } from "../../types";
+import { ItemsPerPageSelect } from "../Photo/ItemsPerPageSelect";
 
 const BookmarksPage: FC = () => {
   const { user } = useAuth();
@@ -136,16 +135,11 @@ const BookmarksPage: FC = () => {
           color="primary"
           sx={{ mb: 2 }}
         />
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h6" sx={{ mr: 2 }}>
-            Photos per page:
-          </Typography>
-          <Select value={limit} size="small" onChange={handleLimitChange}>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-          </Select>
-        </Box>
+        <ItemsPerPageSelect
+          value={limit}
+          onChange={handleLimitChange}
+          options={[10, 20, 50]}
+        />
       </Box>
     </Container>
   );
