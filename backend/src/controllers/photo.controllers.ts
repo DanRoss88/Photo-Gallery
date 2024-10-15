@@ -7,10 +7,11 @@ import cloudinary from '../config/cloudinary';
 
 export const getAllPhotos = catchAsync(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
+  const limit = parseInt(req.query.limit as string) || 12;
   const skip = (page - 1) * limit;
 
   const totalPhotos = await Photo.countDocuments();
+  const totalPages = Math.ceil(totalPhotos / limit);
 
   const photos = await Photo.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
 
@@ -18,6 +19,8 @@ export const getAllPhotos = catchAsync(async (req: Request, res: Response) => {
     status: 'success',
     results: photos.length,
     total: totalPhotos,
+    totalPages,
+    currentPage: page,
     data: {
       data: photos,
     },
@@ -48,7 +51,7 @@ export const searchPhotos = catchAsync(async (req: Request, res: Response) => {
   const {
     query,
     page = 1,
-    limit = 10,
+    limit = 12,
   } = req.query as {
     query?: string;
     page?: number;
@@ -58,7 +61,7 @@ export const searchPhotos = catchAsync(async (req: Request, res: Response) => {
   console.log('Received search query:', query);
 
   const pageNumber = Number(page) || 1;
-  const limitNumber = Number(limit) || 10;
+  const limitNumber = Number(limit) || 12;
 
   const tags = typeof query === 'string' ? query.split(',') : [];
   const skip = (pageNumber - 1) * limitNumber;

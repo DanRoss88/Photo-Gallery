@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.model';
 import { AsyncRequestHandler, UserPayload } from '../types';
 import { JWT_SECRET } from '../config/env';
-import { AppError } from '../utils/errorHandler';
+import { AppError, catchAsync } from '../utils/errorHandler';
 
 const jwt_secret = JWT_SECRET;
 
@@ -72,4 +72,17 @@ export const logout: AsyncRequestHandler = async (req, res) => {
 
 export const verifyToken: AsyncRequestHandler = async (req, res) => {
   res.json(req.user);
+};
+
+export const getUsernameById: AsyncRequestHandler = async (req, res) => {
+  const userId = req.params.id;
+
+  const user = await User.findById(userId).select('username');
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  res.status(201).json({
+    user: { username: user.username },
+  });
 };
