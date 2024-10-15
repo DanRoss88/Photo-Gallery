@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useCallback } from 'react';
 import { SelectChangeEvent } from '@mui/material';
 
-export const usePagination = (initialPage: number = 1, initialLimit: number = 10) => {
+export const usePagination = (initialPage: number = 1, initialLimit: number = 12) => {
   const [page, setPage] = useState(initialPage);
   const [limit, setLimit] = useState(initialLimit);
 

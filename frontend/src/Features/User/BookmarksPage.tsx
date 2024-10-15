@@ -5,7 +5,7 @@ import { apiClient } from '../../Services/api';
 import usePhotoOperations from '../../Hooks/usePhotoOperations';
 import usePagination from '../../Hooks/usePagination';
 import PhotoCard from '../Photo/PhotoCard';
-import { PhotoBookmarkResponse } from '../../types';
+import { PhotoBookmarkResponse, Photo } from '../../types';
 import { ItemsPerPageSelect } from '../Photo/ItemsPerPageSelect';
 
 const BookmarksPage: FC = () => {
@@ -87,7 +87,7 @@ const BookmarksPage: FC = () => {
             py: 4,
           }}
         >
-          {photos.map((photo) => (
+          {photos.map((photo: Photo) => (
             <Box key={photo._id} sx={{ width: { xs: '100%', sm: '45%', md: '30%' } }}>
               <PhotoCard photo={photo} onLike={handleLike} onBookmark={handleBookmark} currentUserId={currentUserId} />
             </Box>
@@ -104,7 +104,7 @@ const BookmarksPage: FC = () => {
         }}
       >
         <Pagination count={Math.ceil(totalBookmarks / limit)} page={page} onChange={handlePageChange} color="primary" sx={{ mb: 2 }} />
-        <ItemsPerPageSelect value={limit} onChange={handleLimitChange} options={[10, 20, 50]} />
+        <ItemsPerPageSelect value={limit} onChange={handleLimitChange} options={[12, 24, 36]} />
       </Box>
     </Container>
   );

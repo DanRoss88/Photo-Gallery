@@ -27,6 +27,8 @@ export interface PhotoBookmarkResponse {
   status: string;
   results: number;
   total: number;
+  totalPages: number;
+  currentPage: number;
   data: {
     data: Photo[];
   };
@@ -45,6 +47,8 @@ export interface PhotoCardProps {
   onLike: (id: string) => void;
   onBookmark: (id: string) => void;
   currentUserId: string | null;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 export interface PhotoUploadFormValues {

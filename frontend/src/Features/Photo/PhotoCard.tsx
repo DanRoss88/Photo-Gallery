@@ -1,12 +1,33 @@
-import { FC } from 'react';
-import { Card, CardMedia, CardContent, CardActions, Typography, IconButton } from '@mui/material';
+import { FC, useState, useEffect } from 'react';
+import { Card, CardMedia, CardContent, CardActions, Typography, IconButton, Chip, Box, Button } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Bookmark, BookmarkBorder } from '@mui/icons-material';
-import { PhotoCardProps } from '../../types';
+import { PhotoCardProps, User } from '../../types';
+import { apiClient } from '../../Services/api';
 
-const PhotoCard: FC<PhotoCardProps> = ({ photo, onLike, onBookmark, currentUserId }) => {
+const PhotoCard: FC<PhotoCardProps> = ({ photo, onLike, onBookmark, currentUserId, onEdit, onDelete }) => {
   const isLiked = currentUserId ? photo.likes.includes(currentUserId) : false;
   const isBookmarked = currentUserId ? photo.bookmarkedBy.includes(currentUserId) : false;
+  const [photoUsername, setPhotoUsername] = useState<string | null>(null);
+
+
+  const fetchUser = async (photoUserId: string) => {
+    try {
+      const response = await apiClient.get<{ user: User }>(`/users/${photoUserId}`);
+      if (response.user ) {
+        setPhotoUsername(response.user.username);
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      setPhotoUsername('Unknown User');
+    }
+  };
+
+  useEffect(() => {
+    if (photo.user) {
+      fetchUser(photo.user);
+    }
+  }, [photo.user]);
 
   return (
     <Card sx={{ maxWidth: 345, m: 2 }}>
@@ -15,8 +36,28 @@ const PhotoCard: FC<PhotoCardProps> = ({ photo, onLike, onBookmark, currentUserI
         <Typography variant="body1" color="text.secondary">
           {photo.description}
         </Typography>
+        {Array.isArray(photo.tags) && photo.tags.length > 0 && (
+          <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {photo.tags.map((tag: string, index: number) => (
+              <Chip key={index} label={tag} size="small" />
+            ))}
+          </Box>
+        )}
+        <Typography variant="body2" color="text.secondary">
+          @{photoUsername || 'Loading...'}
+        </Typography>
       </CardContent>
       <CardActions disableSpacing>
+      {onEdit && (
+          <Button size="small" variant="contained" onClick={() => onEdit(photo._id)}>
+            Edit
+          </Button>
+        )}
+        {onDelete && (
+          <Button size="small" variant="contained" onClick={() => onDelete(photo._id)}>
+            Delete
+          </Button>
+        )}
         <IconButton aria-label="like" onClick={() => onLike(photo._id)} disabled={!currentUserId}>
           <FavoriteIcon color={isLiked ? 'secondary' : 'action'} />
         </IconButton>

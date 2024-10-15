@@ -13,6 +13,53 @@ export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string
     setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo._id !== photoId));
   }, []);
 
+  const getPhotos = useCallback(async () => {
+    try {
+      const response = await apiClient.get<{ data: Photo[] }>('/photos');
+      setPhotos(response.data);
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+    }
+  }, []);
+
+  const getUsersPhotos = useCallback(async () => {
+    if (!currentUserId) return;
+    try {
+      const response = await apiClient.get<{ data: { photos: Photo[] } }>('/photos/user');
+      setPhotos(response.data.photos);
+    } catch (error) {
+      console.error('Error fetching user photos:', error);
+    }
+  }, [currentUserId]);
+
+  // Edit a photo's details (description, tags, etc.)
+  const editPhoto = useCallback(
+    async (photoId: string, updatedData: { description: string; tags: string[] }) => {
+      try {
+        const response = await apiClient.put<{ data: { photo: Photo } }>(`/photos/${photoId}`, updatedData);
+        if (response.data && response.data.photo) {
+          updatePhotoInState(response.data.photo);
+        }
+      } catch (error) {
+        console.error('Error editing photo:', error);
+      }
+    },
+    [updatePhotoInState]
+  );
+
+  // Delete a photo (DELETE)
+  const deletePhoto = useCallback(
+    async (photoId: string) => {
+      try {
+        await apiClient.delete(`/photos/${photoId}`);
+        removePhotoFromState(photoId);
+      } catch (error) {
+        console.error('Error deleting photo:', error);
+      }
+    },
+    [removePhotoFromState]
+  );
+
   const handlePhotoOperation = useCallback(
     async (photoId: string, operation: 'like' | 'bookmark') => {
       if (!currentUserId) return;
@@ -57,7 +104,16 @@ export const usePhotoOperations = (initialPhotos: Photo[], currentUserId: string
 
   const handleBookmark = useCallback((photoId: string) => handlePhotoOperation(photoId, 'bookmark'), [handlePhotoOperation]);
 
-  return { photos, setPhotos, handleLike, handleBookmark, updatePhotoInState };
+  return {
+    photos,
+    getUsersPhotos,
+    setPhotos,
+    handleLike,
+    handleBookmark,
+    getPhotos,
+    editPhoto,
+    deletePhoto,
+  };
 };
 
 export default usePhotoOperations;

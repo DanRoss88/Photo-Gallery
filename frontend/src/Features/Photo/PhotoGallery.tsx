@@ -5,22 +5,12 @@ import SearchBar from '../Navbar/SearchBar';
 import { useSearchPhotos } from '../../Hooks/useSearchPhotos';
 import { useAuth } from '../../Contexts/AuthContext';
 import { apiClient } from '../../Services/api';
-import { PhotoBookmarkResponse, Photo } from '../../types';
+import { PhotoBookmarkResponse, Photo, AlertColor } from '../../types';
 import usePhotoOperations from '../../Hooks/usePhotoOperations';
 import usePagination from '../../Hooks/usePagination';
 import { searchContainerStyles, searchFormStyles, searchResultsStyles } from '../../theme';
 import { ItemsPerPageSelect } from './ItemsPerPageSelect';
-
-interface EmojiProps {
-  symbol: string;
-  label?: string;
-}
-
-const Emoji: FC<EmojiProps> = ({ symbol, label }) => (
-  <span className="emoji" role="img" aria-label={label ? label : ''} aria-hidden={label ? 'false' : 'true'}>
-    {symbol}
-  </span>
-);
+import { UserSnackbar } from './Snackbar';
 
 const PhotoGallery: FC = () => {
   const { user } = useAuth();
@@ -30,11 +20,18 @@ const PhotoGallery: FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const { searchResults, isSearching, searchError, searchPhotos } = useSearchPhotos();
+  const [totalPages, setTotalPages] = useState(1);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: AlertColor }>({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
 
   const fetchPhotos = useCallback(async () => {
     try {
       const response = await apiClient.get<PhotoBookmarkResponse>(`/photos?page=${page}&limit=${limit}`);
       setPhotos(response?.data?.data ?? []);
+      setTotalPages(response?.totalPages ?? 1);
     } catch (error) {
       console.error('Error fetching photos:', error);
       setPhotos([]);
@@ -54,19 +51,20 @@ const PhotoGallery: FC = () => {
     if (searchTerm.trim()) {
       searchPhotos(searchTerm.trim());
       setActiveTab(1);
+      if (searchResults.length === 0) {
+        setSnackbar({
+          open: true,
+          message: 'No photos found for your search.',
+          severity: 'warning',
+        });
+      }
     }
   };
 
   const renderPhotoGrid = (photoList: Photo[]) => (
     <Box sx={searchResultsStyles}>
-      {photoList.length > 0 ? (
-        photoList.map((photo) => <PhotoCard key={photo._id} photo={photo} onLike={handleLike} onBookmark={handleBookmark} currentUserId={currentUserId} />)
-      ) : (
-        <>
-          <Typography variant="h6">No photos</Typography>
-          <Emoji symbol="U+1F911" label="smiley-sad" />
-        </>
-      )}
+      {photoList.length > 0 &&
+        photoList.map((photo) => <PhotoCard key={photo._id} photo={photo} onLike={handleLike} onBookmark={handleBookmark} currentUserId={currentUserId} />)}
     </Box>
   );
 
@@ -75,7 +73,7 @@ const PhotoGallery: FC = () => {
       <Paper elevation={3}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
           <Tab sx={{ mb: 1, mt: 1 }} label="Gallery" />
-          <Tab sx={{ mb: 1, mt: 1 }} label="Search Results" />
+          <Tab sx={{ mb: 1, mt: 1 }} label="Search Photos" />
         </Tabs>
 
         <Box sx={searchFormStyles}>
@@ -94,8 +92,8 @@ const PhotoGallery: FC = () => {
                 flexDirection: 'column',
               }}
             >
-              <Pagination count={Math.ceil((photos.length || 1) / limit)} page={page} onChange={handlePageChange} color="primary" sx={{ mb: 2 }} />
-              <ItemsPerPageSelect value={limit} onChange={handleLimitChange} options={[10, 20, 50]} />
+              <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" sx={{ mb: 2 }} />
+              <ItemsPerPageSelect value={limit} onChange={handleLimitChange} options={[12, 24, 36]} />
             </Box>
           </>
         )}
@@ -116,6 +114,12 @@ const PhotoGallery: FC = () => {
           </>
         )}
       </Paper>
+      <UserSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      />
     </Container>
   );
 };
