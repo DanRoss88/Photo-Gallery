@@ -48,9 +48,9 @@ const UserPhotos: FC<UserPhotosProps> = ({ photos, onLike, onBookmark, onEdit, o
   return (
     <Container maxWidth="lg">
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Typography variant="h4" component="div" mb="4rem">
+      {photos.length > 0 && <Typography variant="h4" component="div" mb="4rem">
           Your Photos
-        </Typography>
+        </Typography>}
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         {photos.map((photo) => (

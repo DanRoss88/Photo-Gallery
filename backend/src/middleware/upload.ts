@@ -32,10 +32,15 @@ export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) =>
     throw new AppError('User not authenticated', 401);
   }
   const optimizedImagePath = path.join(__dirname, '../../uploads/optimized-' + req.file.filename);
-  await sharp(req.file.path)
-    .resize(200, 200, { fit: 'inside' })
-    .toFormat('jpeg', { quality: 80 })
-    .toFile(optimizedImagePath);
+
+      try {
+        await sharp(req.file.path)
+            .resize(200, 200, { fit: 'inside' })
+            .toFormat('jpeg', { quality: 80 })
+            .toFile(optimizedImagePath);
+    } catch (error) {
+        throw new AppError('Image processing failed', 500);
+    }
 
   const result = await cloudinary.uploader.upload(optimizedImagePath, {
     folder: `photo-app/user_photos/${req.user._id}`,
@@ -52,7 +57,7 @@ export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) =>
     : typeof tags === 'string' && tags.trim() !== ''
     ? tags.split(',').map((tag: string) => tag.trim())
     : [];
-  console.log('Tags received:', tags);
+
   // Create a new photo in the database with the uploaded image URL, public ID, and tags
   const newPhoto = {
     user: req.user._id,
@@ -61,6 +66,7 @@ export const uploadPhoto = catchAsync(async (req: AuthRequest, res: Response) =>
     description: req.body.description,
     tags: photoTags,
   };
+  
   const createdPhoto = await Photo.create(newPhoto); // Save to the database (assuming you have a Photo model)
 
   res.status(201).json({

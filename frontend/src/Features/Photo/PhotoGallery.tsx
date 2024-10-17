@@ -46,10 +46,10 @@ const PhotoGallery: FC = () => {
     setActiveTab(newValue);
   };
 
-  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
+  const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      searchPhotos(searchTerm.trim());
+      await searchPhotos(searchTerm.trim());
       setActiveTab(1);
       if (searchResults.length === 0) {
         setSnackbar({

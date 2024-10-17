@@ -30,7 +30,7 @@ const PhotoCard: FC<PhotoCardProps> = ({ photo, onLike, onBookmark, currentUserI
 
   return (
     <Card sx={{ maxWidth: 345, m: 2 }}>
-      <CardMedia component="img" height="200" width="200" image={photo.imageUrl} alt={photo.description || 'Photo'} loading="lazy" />
+      <CardMedia component="img" height="200" width="200" image={photo.imageUrl} alt={photo.description || 'Photo'} loading="lazy" sx={{ objectFit: 'cover', width: '100%'}} />
       <CardContent>
         <Typography variant="body1" color="text.secondary">
           {photo.description}
