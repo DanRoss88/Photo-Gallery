@@ -2,31 +2,30 @@ import { FC, useState, useEffect } from 'react';
 import { Card, CardMedia, CardContent, CardActions, Typography, IconButton, Chip, Box, Button } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Bookmark, BookmarkBorder } from '@mui/icons-material';
-import { PhotoCardProps, User } from '../../types';
+import { PhotoCardProps } from '../../types';
 import { apiClient } from '../../Services/api';
 
 const PhotoCard: FC<PhotoCardProps> = ({ photo, onLike, onBookmark, currentUserId, onEdit, onDelete }) => {
   const isLiked = currentUserId ? photo.likes.includes(currentUserId) : false;
   const isBookmarked = currentUserId ? photo.bookmarkedBy.includes(currentUserId) : false;
   const [photoUsername, setPhotoUsername] = useState<string | null>(null);
-
-
-  const fetchUser = async (photoUserId: string) => {
-    try {
-      const response = await apiClient.get<{ user: User }>(`/users/${photoUserId}`);
-      if (response.user ) {
-        setPhotoUsername(response.user.username);
-      }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      setPhotoUsername('Unknown User');
-    }
-  };
-
+  
   useEffect(() => {
-    if (photo.user) {
-      fetchUser(photo.user);
-    }
+    const fetchUser = async () => {
+      if (typeof photo.user === 'string') {
+        try {
+          const response = await apiClient.get<{ user: { username: string } }>(`/users/${photo.user}`);
+          setPhotoUsername(response.user.username);
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          setPhotoUsername('Unknown User');
+        }
+      } else if (typeof photo.user === 'object' && photo.user.username) {
+        setPhotoUsername(photo.user.username);
+      }
+    };
+
+    fetchUser();
   }, [photo.user]);
 
   return (

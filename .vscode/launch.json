@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Backend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "args": ["${workspaceFolder}/backend/src/index.ts"],
+      "outFiles": ["${workspaceFolder}/backend/dist/**/*.js"],
+      "envFile": "${workspaceFolder}/backend/.env",
+      "sourceMaps": true,
+      "restart": true
+    },
+    {
+      "name": "Debug Frontend",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3002",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true,
+      "preLaunchTask": "npm: start - frontend"
+    }
+  ]
+}

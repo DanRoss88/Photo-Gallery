@@ -82,7 +82,7 @@ export const getUsernameById: AsyncRequestHandler = async (req, res) => {
     throw new AppError('User not found', 404);
   }
 
-  res.status(201).json({
+  res.status(200).json({
     user: { username: user.username },
   });
 };

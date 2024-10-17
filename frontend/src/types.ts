@@ -13,7 +13,7 @@ export interface AuthResponse {
 
 export interface Photo {
   _id: string;
-  user: string;
+  user: string | { _id: string; username: string };
   imageUrl: string;
   tags?: string[];
   description?: string;

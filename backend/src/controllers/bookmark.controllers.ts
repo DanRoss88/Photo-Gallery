@@ -8,7 +8,7 @@ import Photo from '../models/photo.model';
 export const getUserBookmarks = catchAsync(async (req: AuthRequest, res: Response) => {
   const userId = req.params.id;
   const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
+  const limit = parseInt(req.query.limit as string) || 12;
   const skip = (page - 1) * limit;
 
   if (!userId) {
