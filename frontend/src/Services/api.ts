@@ -43,4 +43,4 @@ class APIClient {
   }
 }
 
-export const apiClient = new APIClient('http://localhost:5000/api');
+export const apiClient = new APIClient(process.env.REACT_APP_API_CLIENT || 'http://localhost:5000/api');
