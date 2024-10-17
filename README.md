@@ -27,7 +27,7 @@ Use our cheat-code-like search to find the exact photo you're looking for! Filte
 
 1. Clone the repository:
    \`\`\`
-   git clone https://github.com/danross88/photo-gallery.git
+   git clone https://github.com:DanRoss88/Photo-Gallery.git
    \`\`\`
 
 2. Install dependencies:
