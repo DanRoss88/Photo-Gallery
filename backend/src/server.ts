@@ -30,7 +30,11 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.raw({ type: 'application/json' }));
-
+app.use(
+  express.static(path.join(__dirname, 'build'), {
+    maxAge: '1d', // Cache files for 1 day
+  })
+);
 app.use(express.static('uploads'));
 app.use(globalErrorHandler);
 app.use((req, res, next) => {

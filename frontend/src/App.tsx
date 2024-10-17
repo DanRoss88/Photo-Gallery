@@ -1,4 +1,4 @@
-import React, { useEffect , FC } from 'react';
+import { useEffect , FC } from 'react';
 import { AuthProvider } from './Contexts/AuthContext';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
