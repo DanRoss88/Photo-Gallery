@@ -1,8 +1,4 @@
-import { Markdown } from 'react-markdown';
 
-export default function Component() {
-  return (
-    <Markdown>{`
 # 🕹️ Retro Photo Gallery 📸
 
 Welcome to Retro Photo Gallery, the ultimate photo sharing experience with an 80's twist! Get ready to level up your photo game and embark on a nostalgic journey through pixels and power-ups!
