@@ -22,7 +22,7 @@ connectDB();
 app.use(helmet());
 app.use(
   cors({
-    origin: Client,
+    origin: Client || 'http://localhost:3002',
     credentials: true,
   })
 );
