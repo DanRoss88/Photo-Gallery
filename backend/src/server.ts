@@ -3,7 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import path from 'path';
 import connectDB from './config/db';
-import { PORT } from './config/env';
+import { PORT, CLIENT } from './config/env';
 import { globalErrorHandler } from './utils/errorHandler';
 import { AppError } from './utils/errorHandler';
 import bodyParser from 'body-parser';
@@ -14,7 +14,7 @@ import photoRoutes from './routes/photo.routes';
 import verifyTokenRoute from './routes/auth.routes';
 
 const app = express();
-
+const Client = CLIENT as string;
 // Connect to MongoDB
 connectDB();
 
@@ -22,7 +22,7 @@ connectDB();
 app.use(helmet());
 app.use(
   cors({
-    origin: 'http://localhost:3002',
+    origin: Client,
     credentials: true,
   })
 );
@@ -47,6 +47,9 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ message: "Welcome to the Photo Gallery API" });
+});
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/photos', photoRoutes);
