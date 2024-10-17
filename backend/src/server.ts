@@ -47,13 +47,14 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.get('/', (req, res) => {
-  res.json({ message: "Welcome to the Photo Gallery API" });
-});
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/auth', verifyTokenRoute);
+app.get('/', (req, res) => {
+  res.json({ message: "Welcome to the Photo Gallery API" });
+});
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
