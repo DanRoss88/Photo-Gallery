@@ -4,13 +4,10 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
+    "prebuild": "npm install",
     "build": "tsc --project tsconfig.json",
     "start": "node dist/server.js",
     "dev": "tsc --watch & nodemon dist/server.js"
-  },
-  "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=6.0.0"
   },
   "keywords": [],
   "author": "",
@@ -50,5 +47,9 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.2"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   }
 }
