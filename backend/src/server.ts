@@ -25,15 +25,7 @@ console.log('Client Origin:', clientOrigin);
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
-  origin: (origin, callback) => {
-    console.log('Request Origin:', origin);
-    const allowedOrigins = [clientOrigin, 'https://retro-photo-gallery.vercel.app']; // Add Vercel domain
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: clientOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
