@@ -17,7 +17,7 @@ class APIClient {
 
   private handleError(error: AxiosError) {
     if (error.response?.status === 401) {
-      // Handle unauthorized error (e.g., redirect to login)
+      console.error('Unauthorized access:', error);
     }
     return Promise.reject(error);
   }
@@ -43,4 +43,7 @@ class APIClient {
   }
 }
 
-export const apiClient = new APIClient(process.env.REACT_APP_API_CLIENT || 'http://localhost:5000/api');
+const apiBaseUrl = process.env.REACT_APP_API_CLIENT || 'http://localhost:5000/api';
+console.log('API Base URL:', apiBaseUrl);
+
+export const apiClient = new APIClient(apiBaseUrl);
