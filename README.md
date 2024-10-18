@@ -79,6 +79,4 @@ This project is licensed under the MIT License.
 - Built with love by *Daniel Ross*
 
 Ready Player One? Let's dive into the Retro Pixel Gallery and start your photo adventure! 🚀👾
-    `}</Markdown>
-  );
-}
+  
