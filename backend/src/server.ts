@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import path from 'path';
@@ -24,12 +24,14 @@ app.use(helmet());
 console.log('Client Origin:', clientOrigin);
 
 // CORS configuration
-app.use(cors({
+const corsOptions: cors.CorsOptions = {
   origin: clientOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -58,7 +60,7 @@ app.use('/api/photos', photoRoutes);
 app.use('/api/auth', verifyTokenRoute);
 
 app.get('/', (req, res) => {
-  res.json({ message: "Welcome to the Photo Gallery API" });
+  res.json({ message: 'Welcome to the Photo Gallery API' });
 });
 
 app.get('/*', function (req, res) {
