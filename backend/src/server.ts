@@ -24,8 +24,29 @@ app.use(helmet());
 console.log('Client Origin:', clientOrigin);
 
 // CORS configuration
+// const corsOptions: cors.CorsOptions = {
+//   origin: clientOrigin,
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   optionsSuccessStatus: 200,
+// };
+
 const corsOptions: cors.CorsOptions = {
-  origin: clientOrigin,
+  origin: (origin, callback) => {
+    console.log('Request Origin:', origin);
+    const allowedOrigins = [
+      clientOrigin, 
+      'https://retro-photo-gallery.vercel.app'
+    ]; // Add Vercel domain
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests without an origin (likely non-browser clients)
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
