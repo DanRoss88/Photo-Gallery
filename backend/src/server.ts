@@ -20,6 +20,7 @@ connectDB();
 
 // Middleware
 app.use(helmet());
+console.log('Client Origin:', Client);
 app.use(
   cors({
     origin: Client || 'http://localhost:3002',
