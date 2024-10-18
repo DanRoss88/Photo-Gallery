@@ -14,19 +14,26 @@ import photoRoutes from './routes/photo.routes';
 import verifyTokenRoute from './routes/auth.routes';
 
 const app = express();
-const Client = CLIENT as string;
+const clientOrigin = CLIENT || 'http://localhost:3002';
+
 // Connect to MongoDB
 connectDB();
 
 // Middleware
 app.use(helmet());
-console.log('Client Origin:', Client);
-app.use(
-  cors({
-    origin: Client || 'http://localhost:3002',
-    credentials: true,
-  })
-);
+console.log('Client Origin:', clientOrigin);
+
+// CORS configuration
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || origin === clientOrigin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
