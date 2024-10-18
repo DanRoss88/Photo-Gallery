@@ -25,12 +25,20 @@ console.log('Client Origin:', clientOrigin);
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
-  origin: clientOrigin,
+  origin: (origin, callback) => {
+    if (!origin || origin === clientOrigin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
 };
 
+app.options('*',cors())
 app.use(cors(corsOptions));
 
 app.use(cookieParser());
