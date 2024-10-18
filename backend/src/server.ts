@@ -32,16 +32,18 @@ console.log('Client Origin:', clientOrigin);
 //   optionsSuccessStatus: 200,
 // };
 
+const allowedOrigins = [
+  'http://localhost:3002', 
+  'https://retro-photo-gallery.vercel.app',
+  'https://photo-gallery-git-main-danross88s-projects.vercel.app',
+  'https:photo-gallery-c86dwmuzy-danross88s-projects.vercel.app'
+];
+
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     console.log('Request Origin:', origin);
-    const allowedOrigins = [
-      clientOrigin, 
-      'https://retro-photo-gallery.vercel.app'
-    ]; // Add Vercel domain
-
+    // Allow requests with no origin (e.g., non-browser clients)
     if (!origin || allowedOrigins.includes(origin)) {
-      // Allow requests without an origin (likely non-browser clients)
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -53,7 +55,6 @@ const corsOptions: cors.CorsOptions = {
   optionsSuccessStatus: 200,
 };
 
-app.options('*',cors())
 app.use(cors(corsOptions));
 
 app.use(cookieParser());
