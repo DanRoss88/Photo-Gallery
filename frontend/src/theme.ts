@@ -194,6 +194,7 @@ export const formContainerStyles: SxProps<Theme> = {
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: 'calc(100vh - 64px)',
+  mt: '4rem'
 };
 
 export const formPaperStyles: SxProps<Theme> = {
