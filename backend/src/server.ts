@@ -25,7 +25,8 @@ console.log('Client Origin:', clientOrigin);
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
-  origin: (origin, callback) => {
+ origin: (origin, callback) => {
+  console.log('Request Origin:', origin);
     if (!origin || origin === clientOrigin) {
       callback(null, true);
     } else {
