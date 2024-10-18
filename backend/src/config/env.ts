@@ -15,4 +15,4 @@ export const PORT = getEnvVariable('PORT', '5000');
 export const CLOUDINARY_CLOUD_NAME = getEnvVariable('CLOUDINARY_CLOUD_NAME');
 export const CLOUDINARY_API_KEY = getEnvVariable('CLOUDINARY_API_KEY');
 export const CLOUDINARY_API_SECRET = getEnvVariable('CLOUDINARY_API_SECRET');
-export const CLIENT = getEnvVariable('CLIENT');
+export const CLIENT = getEnvVariable('CLIENT', 'http://localhost:3002');

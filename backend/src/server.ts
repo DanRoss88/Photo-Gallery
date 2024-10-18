@@ -24,17 +24,13 @@ app.use(helmet());
 console.log('Client Origin:', clientOrigin);
 
 // CORS configuration
-const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin || origin === clientOrigin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+app.use(cors({
+  origin: clientOrigin,
   credentials: true,
-};
-app.use(cors(corsOptions));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -45,7 +41,7 @@ app.use(
   })
 );
 app.use(express.static('uploads'));
-app.use(globalErrorHandler);
+
 app.use((req, res, next) => {
   console.log('Received request:');
   console.log('Method:', req.method);
@@ -56,20 +52,25 @@ app.use((req, res, next) => {
 });
 
 // Routes
-
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/users', userRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/auth', verifyTokenRoute);
+
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the Photo Gallery API" });
 });
+
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+app.use(globalErrorHandler);
+
 const Port = PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server running on port ${Port}`));
