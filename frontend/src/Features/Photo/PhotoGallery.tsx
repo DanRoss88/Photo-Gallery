@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, FC, SyntheticEvent, FormEvent } from 'react';
-import { Container, Box, Paper, Pagination, Typography, Tab, Tabs, CircularProgress } from '@mui/material';
+import { Container, Box, Paper, Pagination, Typography, Tab, Tabs, CircularProgress, useTheme, useMediaQuery } from '@mui/material';
 import PhotoCard from './PhotoCard';
 import SearchBar from '../Navbar/SearchBar';
 import { useSearchPhotos } from '../../Hooks/useSearchPhotos';
@@ -26,6 +26,9 @@ const PhotoGallery: FC = () => {
     message: '',
     severity: 'info',
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetchPhotos = useCallback(async () => {
     try {
@@ -71,9 +74,21 @@ const PhotoGallery: FC = () => {
   return (
     <Container maxWidth="lg" sx={searchContainerStyles}>
       <Paper elevation={3}>
-        <Tabs value={activeTab} onChange={handleTabChange} centered>
-          <Tab sx={{ mb: 1, mt: 1 }} label="Gallery" />
-          <Tab sx={{ mb: 1, mt: 1 }} label="Search Photos" />
+      <Tabs 
+          value={activeTab} 
+          onChange={handleTabChange} 
+          centered
+          variant={isMobile ? "fullWidth" : "standard"}
+          sx={{
+            '& .MuiTab-root': {
+              fontSize: isMobile ? '0.8rem' : '1rem',
+              minWidth: isMobile ? 'auto' : 90,
+              padding: isMobile ? '6px 12px' : '12px 16px',
+            }
+          }}
+        >
+          <Tab label="Gallery" />
+          <Tab label="Search Photos" />
         </Tabs>
 
         <Box sx={searchFormStyles}>

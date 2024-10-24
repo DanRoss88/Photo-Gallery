@@ -221,7 +221,7 @@ export const searchFormStyles: SxProps<Theme> = {
 };
 
 export const searchInputStyles: SxProps<Theme> = {
-  width: '300px',
+  width: '60%',
   marginRight: 2,
 };
 

@@ -21,14 +21,25 @@ h1 {
   font-weight: 400;
 }
 
-/* Mobile Styles */
-@media (max-width: 600px) {
+/* Tablet Styles */
+@media (max-width: 960px) {
   .navbar-button {
-    font-size: 1rem; /* Smaller size for mobile */
-    padding: 4px 8px; /* Adjust padding for mobile */
+    font-size: 0.8rem;
+    padding: 6px 12px;
   }
 
   .navbar-title {
-    font-size: 1.5rem; /* Smaller title size for mobile */
+    font-size: 1.8rem;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 600px) {
+  .navbar-title {
+    font-size: 1.5rem;
+  }
+
+  .MuiMenuItem-root {
+    font-size: 1rem;
   }
 }
